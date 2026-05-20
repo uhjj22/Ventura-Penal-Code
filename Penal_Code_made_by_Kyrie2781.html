@@ -1,0 +1,2664 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>Penal Code</title>
+<style>
+  * {
+    box-sizing: border-box;
+  }
+
+  :root {
+    --bg: #0b0b0f;
+    --panel: #111116;
+    --panel2: #16171d;
+    --line: #303039;
+    --text: #f5f5f7;
+    --muted: #b8b8c2;
+    --teal: #0f766e;
+    --teal2: #14b8a6;
+    --blue: #38bdf8;
+    --orange: #f59e0b;
+    --red: #ef4444;
+    --green: #22c55e;
+  }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: Arial, Helvetica, sans-serif;
+  }
+
+  header {
+    padding: 28px 18px 16px;
+    text-align: center;
+  }
+
+  .wrap {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  h1 {
+    margin: 0 0 8px;
+    font-size: clamp(30px, 5vw, 50px);
+    letter-spacing: -1px;
+  }
+
+
+  .creator {
+    margin: 4px 0 8px;
+    color: var(--muted);
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: .2px;
+  }
+
+  .subtitle {
+    margin: 0;
+    color: var(--muted);
+    font-size: 15px;
+  }
+
+  .searchbar {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: rgba(11, 11, 15, .96);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    padding: 13px 18px;
+  }
+
+  .search-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 10px;
+  }
+
+  input, button {
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--panel);
+    color: var(--text);
+    padding: 14px 15px;
+    font-size: 16px;
+    outline: none;
+  }
+
+  input {
+    width: 100%;
+  }
+
+  input:focus {
+    border-color: var(--teal2);
+    box-shadow: 0 0 0 3px rgba(20, 184, 166, .18);
+  }
+
+  input::placeholder {
+    color: #7d7d88;
+  }
+
+  button {
+    cursor: pointer;
+    font-weight: 900;
+    white-space: nowrap;
+  }
+
+  button:hover {
+    border-color: var(--teal2);
+  }
+
+  main {
+    padding: 20px 18px 60px;
+  }
+
+  .status {
+    margin: 0 0 14px;
+    color: var(--muted);
+    font-weight: 800;
+  }
+
+  .accordion {
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background: var(--panel);
+    overflow: hidden;
+    margin: 12px 0;
+  }
+
+  summary {
+    list-style: none;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    cursor: pointer;
+    background: var(--teal);
+    padding: 16px 18px;
+    font-weight: 900;
+    text-transform: uppercase;
+  }
+
+  summary::-webkit-details-marker {
+    display: none;
+  }
+
+  summary::after {
+    content: "▼";
+    margin-left: 6px;
+    transition: transform .2s ease;
+  }
+
+  details[open] summary::after {
+    transform: rotate(180deg);
+  }
+
+  .section-count {
+    margin-left: auto;
+    color: #ccfbf1;
+    font-size: 13px;
+    white-space: nowrap;
+  }
+
+  .section-body {
+    padding: 10px;
+    background: #0e0e14;
+  }
+
+  .charge-card {
+    padding: 12px 14px;
+    margin: 8px 0;
+    background: var(--panel2);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+  }
+
+  .charge-top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 4px;
+  }
+
+  .severity {
+    font-size: 11px;
+    font-weight: 950;
+    letter-spacing: .04em;
+  }
+
+  .infraction {
+    color: var(--blue);
+  }
+
+  .misdemeanor {
+    color: var(--orange);
+  }
+
+  .felony {
+    color: var(--red);
+  }
+
+  .capital {
+    color: var(--green);
+  }
+
+  .charge-title {
+    font-size: 16px;
+    line-height: 1.22;
+    font-weight: 950;
+    color: var(--text);
+  }
+
+  .no-results {
+    display: none;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background: var(--panel);
+    padding: 18px;
+    color: var(--muted);
+    font-weight: 900;
+  }
+
+  @media (max-width: 760px) {
+    .search-row {
+      grid-template-columns: 1fr auto;
+    }
+
+    summary {
+      flex-wrap: wrap;
+      align-items: flex-start;
+    }
+
+    .section-count {
+      margin-left: 0;
+      width: 100%;
+    }
+  }
+</style>
+</head>
+<body>
+<header>
+<div class="wrap">
+<h1>Penal Code</h1>
+<p class="creator">Made by Kyrie2781</p>
+<p class="subtitle">Search by charge, code, type, or category.</p>
+</div>
+</header>
+<div class="searchbar">
+<div class="wrap search-row">
+<input autocomplete="off" id="searchInput" placeholder="Search charges..." type="search"/>
+<button id="clearButton" type="button">Clear</button>
+</div>
+</div>
+<main class="wrap">
+<p class="status" id="statusLine">Showing 378 total charge(s).</p>
+<section id="accordions">
+<details class="accordion">
+<summary>
+<span>Infractions / Misdemeanors (101–200)</span>
+<span class="section-count">99 charges</span>
+</summary>
+<div class="section-body">
+<article class="charge-card" data-search="101 JAYWALKING Infraction Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity infraction">INFRACTION</span>
+</div>
+<div class="charge-title">101. JAYWALKING</div>
+</article>
+<article class="charge-card" data-search="102 SPITTING ON PUBLIC PROPERTY Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">102. SPITTING ON PUBLIC PROPERTY</div>
+</article>
+<article class="charge-card" data-search="103 LITTERING / ILLEGAL DUMPING Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">103. LITTERING / ILLEGAL DUMPING</div>
+</article>
+<article class="charge-card" data-search="104 LOITERING IN PUBLIC PARK AFTER HOURS Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">104. LOITERING IN PUBLIC PARK AFTER HOURS</div>
+</article>
+<article class="charge-card" data-search="105 MINOR DISORDERLY BEHAVIOUR IN TRAFFIC Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">105. MINOR DISORDERLY BEHAVIOUR IN TRAFFIC</div>
+</article>
+<article class="charge-card" data-search="106 UNLICENSED STREET PEDDLING Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">106. UNLICENSED STREET PEDDLING</div>
+</article>
+<article class="charge-card" data-search="107 BLOCKING SIDEWALK OR PUBLIC PATH Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">107. BLOCKING SIDEWALK OR PUBLIC PATH</div>
+</article>
+<article class="charge-card" data-search="108 RIDING A BIKE OR SCOOTER IN RESTRICTED AREA Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">108. RIDING A BIKE OR SCOOTER IN RESTRICTED AREA</div>
+</article>
+<article class="charge-card" data-search="109 UNAUTHORIZED STREET GATHERING (SMALL SCALE) Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">109. UNAUTHORIZED STREET GATHERING (SMALL SCALE)</div>
+</article>
+<article class="charge-card" data-search="110 UNAUTHORIZED USE OF PUBLIC UTILITIES Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">110. UNAUTHORIZED USE OF PUBLIC UTILITIES</div>
+</article>
+<article class="charge-card" data-search="111 ILLEGAL STREET PERFORMING WITHOUT PERMIT Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">111. ILLEGAL STREET PERFORMING WITHOUT PERMIT</div>
+</article>
+<article class="charge-card" data-search="112 MISUSE OF PUBLIC TRANSPORT (FARE EVASION) Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">112. MISUSE OF PUBLIC TRANSPORT (FARE EVASION)</div>
+</article>
+<article class="charge-card" data-search="113 PUBLIC NUISANCE / EXCESSIVE NOISE Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">113. PUBLIC NUISANCE / EXCESSIVE NOISE</div>
+</article>
+<article class="charge-card" data-search="114 DISORDERLY CONDUCT Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">114. DISORDERLY CONDUCT</div>
+</article>
+<article class="charge-card" data-search="115 DISTURBING THE PEACE Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">115. DISTURBING THE PEACE</div>
+</article>
+<article class="charge-card" data-search="116 FAILURE TO COMPLY WITH LAWFUL ORDERS Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">116. FAILURE TO COMPLY WITH LAWFUL ORDERS</div>
+</article>
+<article class="charge-card" data-search="117 TRESPASSING (NON-RESTRICTED PROPERTY) Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">117. TRESPASSING (NON-RESTRICTED PROPERTY)</div>
+</article>
+<article class="charge-card" data-search="118. TRESPASSING (POSTED NO ENTRY ZONE) Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">118. TRESPASSING (POSTED NO ENTRY ZONE)</div>
+</article>
+<article class="charge-card" data-search="119 LOITERING IN RESTRICTED AREAS Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">119. LOITERING IN RESTRICTED AREAS</div>
+</article>
+<article class="charge-card" data-search="120 UNAUTHORIZED CLIMBING OF STRUCTURES Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">120. UNAUTHORIZED CLIMBING OF STRUCTURES</div>
+</article>
+<article class="charge-card" data-search="121 MINOR TAMPERING WITH PUBLIC PROPERTY Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">121. MINOR TAMPERING WITH PUBLIC PROPERTY</div>
+</article>
+<article class="charge-card" data-search="122 GRAFFITI OR STREET TAGGING (SMALL SCALE) Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">122. GRAFFITI OR STREET TAGGING (SMALL SCALE)</div>
+</article>
+<article class="charge-card" data-search="123 UNAUTHORIZED USE OF FIREWORKS (MINOR) Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">123. UNAUTHORIZED USE OF FIREWORKS (MINOR)</div>
+</article>
+<article class="charge-card" data-search="124 RECKLESS DRONE OPERATION IN PUBLIC Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">124. RECKLESS DRONE OPERATION IN PUBLIC</div>
+</article>
+<article class="charge-card" data-search="125 RECKLESS PEDESTRIAN BEHAVIOR Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">125. RECKLESS PEDESTRIAN BEHAVIOR</div>
+</article>
+<article class="charge-card" data-search="126 THROWING OBJECTS ON ROADWAY Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">126. THROWING OBJECTS ON ROADWAY</div>
+</article>
+<article class="charge-card" data-search="127 MINOR VEHICLE EQUIPMENT VIOLATION Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">127. MINOR VEHICLE EQUIPMENT VIOLATION</div>
+</article>
+<article class="charge-card" data-search="128 VEHICLE NOISE VIOLATION Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">128. VEHICLE NOISE VIOLATION</div>
+</article>
+<article class="charge-card" data-search="129 IMPROPER PARKING IN RESTRICTED AREA Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">129. IMPROPER PARKING IN RESTRICTED AREA</div>
+</article>
+<article class="charge-card" data-search="130 DRIVING WITHOUT HEADLIGHTS AT NIGHT Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">130. DRIVING WITHOUT HEADLIGHTS AT NIGHT</div>
+</article>
+<article class="charge-card" data-search="131. UNSAFE LANE CHANGE / ILLEGAL U-TURN Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">131. UNSAFE LANE CHANGE / ILLEGAL U-TURN</div>
+</article>
+<article class="charge-card" data-search="132 DRIVING WITHOUT A VALID LICENSE Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">132. DRIVING WITHOUT A VALID LICENSE</div>
+</article>
+<article class="charge-card" data-search="133 RECKLESS USE OF BICYCLE OR SCOOTER Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">133. RECKLESS USE OF BICYCLE OR SCOOTER</div>
+</article>
+<article class="charge-card" data-search="134. RECKLESS HANDLING OF SPORTS EQUIPMENT (DANGEROUS PLAY) Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">134. RECKLESS HANDLING OF SPORTS EQUIPMENT (DANGEROUS PLAY)</div>
+</article>
+<article class="charge-card" data-search="135 PUBLIC INTOXICATION (NON-VIOLENT) Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">135. PUBLIC INTOXICATION (NON-VIOLENT)</div>
+</article>
+<article class="charge-card" data-search="136 MINOR PUBLIC HEALTH VIOLATION (UNSAFE FOOD SELLING) Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">136. MINOR PUBLIC HEALTH VIOLATION (UNSAFE FOOD SELLING)</div>
+</article>
+<article class="charge-card" data-search="137 POSSESSION OF SMALL AMOUNT OF CONTRABAND Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">137. POSSESSION OF SMALL AMOUNT OF CONTRABAND</div>
+</article>
+<article class="charge-card" data-search="138 VERBAL HARASSMENT (SINGLE INSTANCE) Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">138. VERBAL HARASSMENT (SINGLE INSTANCE)</div>
+</article>
+<article class="charge-card" data-search="139 VERBAL HARASSMENT (REPEATED) Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">139. VERBAL HARASSMENT (REPEATED)</div>
+</article>
+<article class="charge-card" data-search="140 MINOR THREATENING GESTURES (NO CONTACT) Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">140. MINOR THREATENING GESTURES (NO CONTACT)</div>
+</article>
+<article class="charge-card" data-search="141 THROWING OR SPLASHING SUBSTANCES AT OTHERS Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">141. THROWING OR SPLASHING SUBSTANCES AT OTHERS</div>
+</article>
+<article class="charge-card" data-search="142 UNWANTED PHYSICAL CONTACT (NON-INJURY) Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">142. UNWANTED PHYSICAL CONTACT (NON-INJURY)</div>
+</article>
+<article class="charge-card" data-search="143 RECKLESS ENDANGERMENT (MINOR) Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">143. RECKLESS ENDANGERMENT (MINOR)</div>
+</article>
+<article class="charge-card" data-search="144 SIMPLE ASSAULT (NO WEAPON) Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">144. SIMPLE ASSAULT (NO WEAPON)</div>
+</article>
+<article class="charge-card" data-search="145 RESISTING ARREST (NON-VIOLENT) Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">145. RESISTING ARREST (NON-VIOLENT)</div>
+</article>
+<article class="charge-card" data-search="146 FILING A FALSE REPORT Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">146. FILING A FALSE REPORT</div>
+</article>
+<article class="charge-card" data-search="147 OBSTRUCTION OF A GOVERNMENT WORKER Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">147. OBSTRUCTION OF A GOVERNMENT WORKER</div>
+</article>
+<article class="charge-card" data-search="148 PETTY THEFT (TIER 1) Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">148. PETTY THEFT (TIER 1)</div>
+</article>
+<article class="charge-card" data-search="149 PETTY THEFT (TIER 2) Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">149. PETTY THEFT (TIER 2)</div>
+</article>
+<article class="charge-card" data-search="150 SHOPLIFTING (LOW VALUE) Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">150. SHOPLIFTING (LOW VALUE)</div>
+</article>
+<article class="charge-card" data-search="151 ATTEMPTED PETTY THEFT Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">151. ATTEMPTED PETTY THEFT</div>
+</article>
+<article class="charge-card" data-search="152 UNAUTHORIZED ENTRY INTO VEHICLE (NO THEFT) Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">152. UNAUTHORIZED ENTRY INTO VEHICLE (NO THEFT)</div>
+</article>
+<article class="charge-card" data-search="153 RECKLESS HANDLING OF NON-FIREARM WEAPONS (BAT, CLUB) Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">153. RECKLESS HANDLING OF NON-FIREARM WEAPONS (BAT, CLUB)</div>
+</article>
+<article class="charge-card" data-search="154 STALKING BEHAVIOR (NON-THREATENING) Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">154. STALKING BEHAVIOR (NON-THREATENING)</div>
+</article>
+<article class="charge-card" data-search="155 MINOR VANDALISM (PROPERTY DAMAGE) Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">155. MINOR VANDALISM (PROPERTY DAMAGE)</div>
+</article>
+<article class="charge-card" data-search="156 TAMPERING WITH NON-CRITICAL INFRASTRUCTURE Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">156. TAMPERING WITH NON-CRITICAL INFRASTRUCTURE</div>
+</article>
+<article class="charge-card" data-search="157 ATTEMPTED UNAUTHORIZED ACCESS TO RESTRICTED BUILDING Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">157. ATTEMPTED UNAUTHORIZED ACCESS TO RESTRICTED BUILDING</div>
+</article>
+<article class="charge-card" data-search="158 RECKLESS PUBLIC STUNT CAUSING PANIC (NON-INJURY) Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">158. RECKLESS PUBLIC STUNT CAUSING PANIC (NON-INJURY)</div>
+</article>
+<article class="charge-card" data-search="159 INTERFERING WITH PUBLIC EVENT OR SERVICE (MINOR) Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">159. INTERFERING WITH PUBLIC EVENT OR SERVICE (MINOR)</div>
+</article>
+<article class="charge-card" data-search="160 ATTEMPTED LOW-LEVEL FRAUD OR MISREPRESENTATION Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">160. ATTEMPTED LOW-LEVEL FRAUD OR MISREPRESENTATION</div>
+</article>
+<article class="charge-card" data-search="161 MINOR TAMPERING WITH SAFETY EQUIPMENT (NON-HARMFUL) Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">161. MINOR TAMPERING WITH SAFETY EQUIPMENT (NON-HARMFUL)</div>
+</article>
+<article class="charge-card" data-search="162 UNAUTHORIZED USE OF EMERGENCY SIREN OR SIGNAL (NON-LEO) Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">162. UNAUTHORIZED USE OF EMERGENCY SIREN OR SIGNAL (NON-LEO)</div>
+</article>
+<article class="charge-card" data-search="163 RECKLESS DISPLAY OF FAKE WEAPON Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">163. RECKLESS DISPLAY OF FAKE WEAPON</div>
+</article>
+<article class="charge-card" data-search="164 REPEATED REFUSAL TO OBEY LAWFUL ORDERS (ESCALATED) Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">164. REPEATED REFUSAL TO OBEY LAWFUL ORDERS (ESCALATED)</div>
+</article>
+<article class="charge-card" data-search="165 ATTEMPTED OBSTRUCTION OF JUSTICE (MINOR) Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">165. ATTEMPTED OBSTRUCTION OF JUSTICE (MINOR)</div>
+</article>
+<article class="charge-card" data-search="166 REPEATED HARASSMENT OF CITIZENS IN PUBLIC Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">166. REPEATED HARASSMENT OF CITIZENS IN PUBLIC</div>
+</article>
+<article class="charge-card" data-search="167 MINOR ASSAULT DURING SPORTS OR PLAY Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">167. MINOR ASSAULT DURING SPORTS OR PLAY</div>
+</article>
+<article class="charge-card" data-search="168 RECKLESS ENDANGERMENT OF MINORS OR ELDERLY (NON-INJURY) Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">168. RECKLESS ENDANGERMENT OF MINORS OR ELDERLY (NON-INJURY)</div>
+</article>
+<article class="charge-card" data-search="169 UNLAWFUL SHORT-TERM BLOCKING OF EMERGENCY VEHICLE Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">169. UNLAWFUL SHORT-TERM BLOCKING OF EMERGENCY VEHICLE</div>
+</article>
+<article class="charge-card" data-search="170 TAMPERING WITH TRAFFIC SIGNS OR SIGNALS Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">170. TAMPERING WITH TRAFFIC SIGNS OR SIGNALS</div>
+</article>
+<article class="charge-card" data-search="171 MINOR RECKLESS DRIVING (NON-FELONY) Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">171. MINOR RECKLESS DRIVING (NON-FELONY)</div>
+</article>
+<article class="charge-card" data-search="172 ATTEMPTED SHOPLIFTING (CAUGHT BEFORE LEAVING) Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">172. ATTEMPTED SHOPLIFTING (CAUGHT BEFORE LEAVING)</div>
+</article>
+<article class="charge-card" data-search="173 REPEATED PETTY THEFT ATTEMPTS Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">173. REPEATED PETTY THEFT ATTEMPTS</div>
+</article>
+<article class="charge-card" data-search="174 THROWING OBJECTS AT MOVING VEHICLES Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">174. THROWING OBJECTS AT MOVING VEHICLES</div>
+</article>
+<article class="charge-card" data-search="175 ATTEMPTED BREAK-IN WITHOUT ENTRY Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">175. ATTEMPTED BREAK-IN WITHOUT ENTRY</div>
+</article>
+<article class="charge-card" data-search="176 BLOCKING OF PUBLIC ROAD (NON-PROTEST) Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">176. BLOCKING OF PUBLIC ROAD (NON-PROTEST)</div>
+</article>
+<article class="charge-card" data-search="177 RECKLESS BRAWLING IN PUBLIC (NON-SEVERE INJURIES) Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">177. RECKLESS BRAWLING IN PUBLIC (NON-SEVERE INJURIES)</div>
+</article>
+<article class="charge-card" data-search="178 REPEATED THREATENING GESTURES TO CITIZENS Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">178. REPEATED THREATENING GESTURES TO CITIZENS</div>
+</article>
+<article class="charge-card" data-search="179 PUBLIC ENDANGERMENT VIA RECKLESS STUNT VEHICLE USE Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">179. PUBLIC ENDANGERMENT VIA RECKLESS STUNT VEHICLE USE</div>
+</article>
+<article class="charge-card" data-search="180 LOW-LEVEL PROPERTY DAMAGE TO BUSINESS (MINOR REPAIRS) Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">180. LOW-LEVEL PROPERTY DAMAGE TO BUSINESS (MINOR REPAIRS)</div>
+</article>
+<article class="charge-card" data-search="181 AGGRESSIVE PANHANDLING OR BEGGING Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">181. AGGRESSIVE PANHANDLING OR BEGGING</div>
+</article>
+<article class="charge-card" data-search="182 REPEATED PUBLIC NUISANCE BEHAVIOR Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">182. REPEATED PUBLIC NUISANCE BEHAVIOR</div>
+</article>
+<article class="charge-card" data-search="183 REPEATED RECKLESS ENDANGERMENT (NON-INJURY) Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">183. REPEATED RECKLESS ENDANGERMENT (NON-INJURY)</div>
+</article>
+<article class="charge-card" data-search="184 MINOR HATE GESTURE (NON-SPEECH, ROBLOX-SAFE) Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">184. MINOR HATE GESTURE (NON-SPEECH, ROBLOX-SAFE)</div>
+</article>
+<article class="charge-card" data-search="185. REFUSING EVACUATION DURING PUBLIC SAFETY EMERGENCY Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">185. REFUSING EVACUATION DURING PUBLIC SAFETY EMERGENCY</div>
+</article>
+<article class="charge-card" data-search="186 ATTEMPTED LOW-VALUE SCAM Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">186. ATTEMPTED LOW-VALUE SCAM</div>
+</article>
+<article class="charge-card" data-search="187 BLOCKING FIRE HYDRANT OR EMERGENCY ACCESS AREA Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">187. BLOCKING FIRE HYDRANT OR EMERGENCY ACCESS AREA</div>
+</article>
+<article class="charge-card" data-search="189 REPEATED UNWANTED PHYSICAL CONTACT (NON-INJURY) Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">189. REPEATED UNWANTED PHYSICAL CONTACT (NON-INJURY)</div>
+</article>
+<article class="charge-card" data-search="190 PUBLIC CHALLENGE TO FIGHT (NO ACTUAL FIGHT) Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">190. PUBLIC CHALLENGE TO FIGHT (NO ACTUAL FIGHT)</div>
+</article>
+<article class="charge-card" data-search="191 UNAUTHORIZED CLIMBING OF MOVING VEHICLE Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">191. UNAUTHORIZED CLIMBING OF MOVING VEHICLE</div>
+</article>
+<article class="charge-card" data-search="192 TRESPASSING ON TRANSPORT INFRASTRUCTURE (TRACKS, DEPOT) Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">192. TRESPASSING ON TRANSPORT INFRASTRUCTURE (TRACKS, DEPOT)</div>
+</article>
+<article class="charge-card" data-search="193 PERSISTENT REFUSAL TO IDENTIFY TO OFFICER Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">193. PERSISTENT REFUSAL TO IDENTIFY TO OFFICER</div>
+</article>
+<article class="charge-card" data-search="194 LOW-LEVEL TAMPERING WITH ATM OR VENDING MACHINE Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">194. LOW-LEVEL TAMPERING WITH ATM OR VENDING MACHINE</div>
+</article>
+<article class="charge-card" data-search="195 UNAUTHORIZED BLOCKING OF INTERSECTION Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">195. UNAUTHORIZED BLOCKING OF INTERSECTION</div>
+</article>
+<article class="charge-card" data-search="196 REPEATED MINOR ASSAULT (NON-SEVERE) Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">196. REPEATED MINOR ASSAULT (NON-SEVERE)</div>
+</article>
+<article class="charge-card" data-search="197 REPEATED RESISTING ARREST (NON-VIOLENT) Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">197. REPEATED RESISTING ARREST (NON-VIOLENT)</div>
+</article>
+<article class="charge-card" data-search="198 PUBLIC ENDANGERMENT BY UNSAFE CONSTRUCTION SETUP Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">198. PUBLIC ENDANGERMENT BY UNSAFE CONSTRUCTION SETUP</div>
+</article>
+<article class="charge-card" data-search="199 ATTEMPTED ENTRY TO CRITICAL INFRASTRUCTURE (NO DAMAGE) Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">199. ATTEMPTED ENTRY TO CRITICAL INFRASTRUCTURE (NO DAMAGE)</div>
+</article>
+<article class="charge-card" data-search="200 PERSISTENT LOW-LEVEL CRIMINAL BEHAVIOR (COMBINED MINOR OFFENSES) Misdemeanor Infractions / Misdemeanors (101–200)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">200. PERSISTENT LOW-LEVEL CRIMINAL BEHAVIOR (COMBINED MINOR OFFENSES)</div>
+</article>
+</div>
+</details>
+<details class="accordion">
+<summary>
+<span>Felonies (201–275)</span>
+<span class="section-count">75 charges</span>
+</summary>
+<div class="section-body">
+<article class="charge-card" data-search="201. GRAND THEFT Felony Felonies (201–275)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">201. GRAND THEFT</div>
+</article>
+<article class="charge-card" data-search="202 GRAND THEFT AUTO Felony Felonies (201–275)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">202. GRAND THEFT AUTO</div>
+</article>
+<article class="charge-card" data-search="203 ARMED ROBBERY Felony Felonies (201–275)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">203. ARMED ROBBERY</div>
+</article>
+<article class="charge-card" data-search="204 BURGLARY (BREAKING &amp; ENTERING) Felony Felonies (201–275)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">204. BURGLARY (BREAKING &amp; ENTERING)</div>
+</article>
+<article class="charge-card" data-search="205 EXTORTION / BLACKMAIL Felony Felonies (201–275)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">205. EXTORTION / BLACKMAIL</div>
+</article>
+<article class="charge-card" data-search="206 FRAUD / FORGERY Felony Felonies (201–275)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">206. FRAUD / FORGERY</div>
+</article>
+<article class="charge-card" data-search="207 ASSAULT WITH A DANGEROUS OBJECT Felony Felonies (201–275)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">207. ASSAULT WITH A DANGEROUS OBJECT</div>
+</article>
+<article class="charge-card" data-search="208 AGGRAVATED ASSAULT Felony Felonies (201–275)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">208. AGGRAVATED ASSAULT</div>
+</article>
+<article class="charge-card" data-search="209 KIDNAPPING / HOSTAGE-TAKING Felony Felonies (201–275)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">209. KIDNAPPING / HOSTAGE-TAKING</div>
+</article>
+<article class="charge-card" data-search="210 ORGANIZED CRIMINAL ACTIVITY Felony Felonies (201–275)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">210. ORGANIZED CRIMINAL ACTIVITY</div>
+</article>
+<article class="charge-card" data-search="211 THREATS AGAINST PUBLIC OFFICIALS Felony Felonies (201–275)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">211. THREATS AGAINST PUBLIC OFFICIALS</div>
+</article>
+<article class="charge-card" data-search="212 TAMPERING WITH EVIDENCE (FELONY CASE) Felony Felonies (201–275)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">212. TAMPERING WITH EVIDENCE (FELONY CASE)</div>
+</article>
+<article class="charge-card" data-search="213 ESCAPE FROM CUSTODY (VIOLENT) Felony Felonies (201–275)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">213. ESCAPE FROM CUSTODY (VIOLENT)</div>
+</article>
+<article class="charge-card" data-search="214 BRIBERY OF GOVERNMENT OFFICIAL Felony Felonies (201–275)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">214. BRIBERY OF GOVERNMENT OFFICIAL</div>
+</article>
+<article class="charge-card" data-search="215 ABUSE OF POWER (GOVERNMENT) Felony Felonies (201–275)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">215. ABUSE OF POWER (GOVERNMENT)</div>
+</article>
+<article class="charge-card" data-search="216 MISUSE OF PUBLIC FUNDS Felony Felonies (201–275)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">216. MISUSE OF PUBLIC FUNDS</div>
+</article>
+<article class="charge-card" data-search="217 CORRUPTION WITHIN LAW ENFORCEMENT Felony Felonies (201–275)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">217. CORRUPTION WITHIN LAW ENFORCEMENT</div>
+</article>
+<article class="charge-card" data-search="218 UNLAWFUL SURVEILLANCE / PRIVACY VIOLATION Felony Felonies (201–275)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">218. UNLAWFUL SURVEILLANCE / PRIVACY VIOLATION</div>
+</article>
+<article class="charge-card" data-search="219 CYBERCRIME (HACKING GOVERNMENT SYSTEMS) Felony Felonies (201–275)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">219. CYBERCRIME (HACKING GOVERNMENT SYSTEMS)</div>
+</article>
+<article class="charge-card" data-search="220 SUBSTANCE TRAFFICKING/SALE OF ILLEGAL SUBSTANCES Felony Felonies (201–275)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">220. SUBSTANCE TRAFFICKING/SALE OF ILLEGAL SUBSTANCES</div>
+</article>
+<article class="charge-card" data-search="221 POSSESSION OF LARGE QUANTITY OF CONTRABAND Felony Felonies (201–275)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">221. POSSESSION OF LARGE QUANTITY OF CONTRABAND</div>
+</article>
+<article class="charge-card" data-search="222 INTENT TO DISTRIBUTE CONTRABAND Felony Felonies (201–275)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">222. INTENT TO DISTRIBUTE CONTRABAND</div>
+</article>
+<article class="charge-card" data-search="223 OPERATING ILLEGAL SMUGGLING OPERATION Felony Felonies (201–275)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">223. OPERATING ILLEGAL SMUGGLING OPERATION</div>
+</article>
+<article class="charge-card" data-search="224 ARMED HOME INVASION Felony Felonies (201–275)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">224. ARMED HOME INVASION</div>
+</article>
+<article class="charge-card" data-search="225 LARGE-SCALE PROPERTY DAMAGE (ARSON EXCLUDED) Felony Felonies (201–275)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">225. LARGE-SCALE PROPERTY DAMAGE (ARSON EXCLUDED)</div>
+</article>
+<article class="charge-card" data-search="226 ARSON (NON-HOMICIDAL) Felony Felonies (201–275)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">226. ARSON (NON-HOMICIDAL)</div>
+</article>
+<article class="charge-card" data-search="227 ATTEMPTED ARMED ROBBERY Felony Felonies (201–275)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">227. ATTEMPTED ARMED ROBBERY</div>
+</article>
+<article class="charge-card" data-search="228 ARMED CARJACKING Felony Felonies (201–275)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">228. ARMED CARJACKING</div>
+</article>
+<article class="charge-card" data-search="229 ATTEMPTED KIDNAPPING Felony Felonies (201–275)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">229. ATTEMPTED KIDNAPPING</div>
+</article>
+<article class="charge-card" data-search="230 AGGRAVATED ASSAULT WITH DEADLY WEAPON Felony Felonies (201–275)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">230. AGGRAVATED ASSAULT WITH DEADLY WEAPON</div>
+</article>
+<article class="charge-card" data-search="231 ATTEMPTED HOMICIDE (NON-CAPITAL) Felony Felonies (201–275)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">231. ATTEMPTED HOMICIDE (NON-CAPITAL)</div>
+</article>
+<article class="charge-card" data-search="232 RECKLESS USE OF EXPLOSIVES (NON-FATAL) Felony Felonies (201–275)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">232. RECKLESS USE OF EXPLOSIVES (NON-FATAL)</div>
+</article>
+<article class="charge-card" data-search="233 LARGE-SCALE CYBER FRAUD Felony Felonies (201–275)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">233. LARGE-SCALE CYBER FRAUD</div>
+</article>
+<article class="charge-card" data-search="234 UNAUTHORIZED ACCESS TO BANKING SYSTEMS Felony Felonies (201–275)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">234. UNAUTHORIZED ACCESS TO BANKING SYSTEMS</div>
+</article>
+<article class="charge-card" data-search="235 IDENTITY THEFT (FELONY LEVEL) Felony Felonies (201–275)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">235. IDENTITY THEFT (FELONY LEVEL)</div>
+</article>
+<article class="charge-card" data-search="236 COUNTERFEITING CURRENCY OR GOVERNMENT IDS Felony Felonies (201–275)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">236. COUNTERFEITING CURRENCY OR GOVERNMENT IDS</div>
+</article>
+<article class="charge-card" data-search="237 LARGE-SCALE FORGERY OPERATION Felony Felonies (201–275)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">237. LARGE-SCALE FORGERY OPERATION</div>
+</article>
+<article class="charge-card" data-search="238 ATTEMPTED MURDER Felony Felonies (201–275)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">238. ATTEMPTED MURDER</div>
+</article>
+<article class="charge-card" data-search="239 ORGANIZED BRIBERY NETWORK Felony Felonies (201–275)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">239. ORGANIZED BRIBERY NETWORK</div>
+</article>
+<article class="charge-card" data-search="240 COORDINATED RIOT INCITEMENT (FELONY LEVEL) Felony Felonies (201–275)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">240. COORDINATED RIOT INCITEMENT (FELONY LEVEL)</div>
+</article>
+<article class="charge-card" data-search="241 REPEATED FELONY ESCAPE ATTEMPTS Felony Felonies (201–275)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">241. REPEATED FELONY ESCAPE ATTEMPTS</div>
+</article>
+<article class="charge-card" data-search="242 WITNESS INTIMIDATION IN FELONY CASE Felony Felonies (201–275)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">242. WITNESS INTIMIDATION IN FELONY CASE</div>
+</article>
+<article class="charge-card" data-search="243 TAMPERING WITH JURY OR COURT OFFICIALS Felony Felonies (201–275)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">243. TAMPERING WITH JURY OR COURT OFFICIALS</div>
+</article>
+<article class="charge-card" data-search="244 VIOLENT THREATS AGAINST MULTIPLE CITIZENS Felony Felonies (201–275)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">244. VIOLENT THREATS AGAINST MULTIPLE CITIZENS</div>
+</article>
+<article class="charge-card" data-search="245 ARMED ASSAULT ON PUBLIC OFFICIAL Felony Felonies (201–275)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">245. ARMED ASSAULT ON PUBLIC OFFICIAL</div>
+</article>
+<article class="charge-card" data-search="246 ATTEMPTED TERROR THREAT (NON-CAPITAL) Felony Felonies (201–275)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">246. ATTEMPTED TERROR THREAT (NON-CAPITAL)</div>
+</article>
+<article class="charge-card" data-search="247 SMUGGLING OF HIGH-VALUE ILLEGAL GOODS Felony Felonies (201–275)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">247. SMUGGLING OF HIGH-VALUE ILLEGAL GOODS</div>
+</article>
+<article class="charge-card" data-search="248 FELONY RECKLESS DRIVING RESULTING IN INJURY Felony Felonies (201–275)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">248. FELONY RECKLESS DRIVING RESULTING IN INJURY</div>
+</article>
+<article class="charge-card" data-search="249 FELONY HIT AND RUN (NON-FATAL INJURY) Felony Felonies (201–275)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">249. FELONY HIT AND RUN (NON-FATAL INJURY)</div>
+</article>
+<article class="charge-card" data-search="250 ILLEGAL WEAPONS TRAFFICKING Felony Felonies (201–275)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">250. ILLEGAL WEAPONS TRAFFICKING</div>
+</article>
+<article class="charge-card" data-search="251 LARGE-SCALE ENVIRONMENTAL HAZARD CREATION Felony Felonies (201–275)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">251. LARGE-SCALE ENVIRONMENTAL HAZARD CREATION</div>
+</article>
+<article class="charge-card" data-search="252 ATTEMPTED MAJOR INFRASTRUCTURE SABOTAGE Felony Felonies (201–275)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">252. ATTEMPTED MAJOR INFRASTRUCTURE SABOTAGE</div>
+</article>
+<article class="charge-card" data-search="253 MAJOR FELONY ESCAPE RESULTING IN INJURIES Felony Felonies (201–275)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">253. MAJOR FELONY ESCAPE RESULTING IN INJURIES</div>
+</article>
+<article class="charge-card" data-search="254 COORDINATED LARGE-SCALE FRAUD SCHEME Felony Felonies (201–275)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">254. COORDINATED LARGE-SCALE FRAUD SCHEME</div>
+</article>
+<article class="charge-card" data-search="255 MAJOR ARSON ENDANGERING LIFE (NON-CAPITAL) Felony Felonies (201–275)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">255. MAJOR ARSON ENDANGERING LIFE (NON-CAPITAL)</div>
+</article>
+<article class="charge-card" data-search="256 ATTEMPTED ARMED PRISON BREAK Felony Felonies (201–275)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">256. ATTEMPTED ARMED PRISON BREAK</div>
+</article>
+<article class="charge-card" data-search="257 DISTRIBUTION OF MALICIOUS CYBER TOOLS Felony Felonies (201–275)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">257. DISTRIBUTION OF MALICIOUS CYBER TOOLS</div>
+</article>
+<article class="charge-card" data-search="258 REPEATED CYBER INTRUSIONS ON GOVERNMENT SYSTEMS Felony Felonies (201–275)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">258. REPEATED CYBER INTRUSIONS ON GOVERNMENT SYSTEMS</div>
+</article>
+<article class="charge-card" data-search="259 ATTEMPTED ARMED HIJACKING OF TRANSPORT VEHICLE Felony Felonies (201–275)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">259. ATTEMPTED ARMED HIJACKING OF TRANSPORT VEHICLE</div>
+</article>
+<article class="charge-card" data-search="260 COORDINATED VIOLENT GANG ACTIVITY Felony Felonies (201–275)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">260. COORDINATED VIOLENT GANG ACTIVITY</div>
+</article>
+<article class="charge-card" data-search="261 LARGE-SCALE POISONING OR CONTAMINATION Felony Felonies (201–275)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">261. LARGE-SCALE POISONING OR CONTAMINATION</div>
+</article>
+<article class="charge-card" data-search="262 COORDINATED ATTACKS ON UTILITY INFRASTRUCTURE Felony Felonies (201–275)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">262. COORDINATED ATTACKS ON UTILITY INFRASTRUCTURE</div>
+</article>
+<article class="charge-card" data-search="263 MAJOR ILLEGAL EXPLOSIVE MANUFACTURING Felony Felonies (201–275)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">263. MAJOR ILLEGAL EXPLOSIVE MANUFACTURING</div>
+</article>
+<article class="charge-card" data-search="264 REPEATED ATTEMPTED MURDER (MULTIPLE INCIDENTS) Felony Felonies (201–275)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">264. REPEATED ATTEMPTED MURDER (MULTIPLE INCIDENTS)</div>
+</article>
+<article class="charge-card" data-search="265 HIGH-LEVEL COORDINATED RIOT RESULTING IN INJURIES Felony Felonies (201–275)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">265. HIGH-LEVEL COORDINATED RIOT RESULTING IN INJURIES</div>
+</article>
+<article class="charge-card" data-search="266 ATTEMPTED ASSASSINATION OF PUBLIC OFFICIAL Felony Felonies (201–275)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">266. ATTEMPTED ASSASSINATION OF PUBLIC OFFICIAL</div>
+</article>
+<article class="charge-card" data-search="267 FELONY TERROR THREAT WITH DEVICE (NON-DETONATED) Felony Felonies (201–275)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">267. FELONY TERROR THREAT WITH DEVICE (NON-DETONATED)</div>
+</article>
+<article class="charge-card" data-search="268 FELONY COORDINATED ORGANIZED CRIME OPERATION Felony Felonies (201–275)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">268. FELONY COORDINATED ORGANIZED CRIME OPERATION</div>
+</article>
+<article class="charge-card" data-search="269 ATTEMPTED LARGE-SCALE HOSTAGE SITUATION Felony Felonies (201–275)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">269. ATTEMPTED LARGE-SCALE HOSTAGE SITUATION</div>
+</article>
+<article class="charge-card" data-search="270 FELONY-LEVEL THREAT TO CITY SAFETY Felony Felonies (201–275)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">270. FELONY-LEVEL THREAT TO CITY SAFETY</div>
+</article>
+<article class="charge-card" data-search="271 HIGH-LEVEL WEAPONS STOCKPILING FOR VIOLENCE Felony Felonies (201–275)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">271. HIGH-LEVEL WEAPONS STOCKPILING FOR VIOLENCE</div>
+</article>
+<article class="charge-card" data-search="272 COORDINATED FELONY CONSPIRACY WITH MULTIPLE CRIMES Felony Felonies (201–275)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">272. COORDINATED FELONY CONSPIRACY WITH MULTIPLE CRIMES</div>
+</article>
+<article class="charge-card" data-search="273 MAJOR ATTEMPTED ATTACK ON GOVERNMENT FACILITY Felony Felonies (201–275)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">273. MAJOR ATTEMPTED ATTACK ON GOVERNMENT FACILITY</div>
+</article>
+<article class="charge-card" data-search="274 COORDINATED ATTEMPTED MASS HARM (NON-CAPITAL) Felony Felonies (201–275)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">274. COORDINATED ATTEMPTED MASS HARM (NON-CAPITAL)</div>
+</article>
+<article class="charge-card" data-search="275 PERSISTENT HIGH-LEVEL FELONY OFFENDER (MULTIPLE FELONIES) Felony Felonies (201–275)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">275. PERSISTENT HIGH-LEVEL FELONY OFFENDER (MULTIPLE FELONIES)</div>
+</article>
+</div>
+</details>
+<details class="accordion">
+<summary>
+<span>Capital / Major Crimes (301–346)</span>
+<span class="section-count">46 charges</span>
+</summary>
+<div class="section-body">
+<article class="charge-card" data-search="301 ATTEMPTED MURDER (SINGLE VICTIM) Capital Capital / Major Crimes (301–346)">
+<div class="charge-top">
+<span class="severity capital">CAPITAL</span>
+</div>
+<div class="charge-title">301. ATTEMPTED MURDER (SINGLE VICTIM)</div>
+</article>
+<article class="charge-card" data-search="302 ATTEMPTED MASS HARM WITH DEADLY WEAPON Capital Capital / Major Crimes (301–346)">
+<div class="charge-top">
+<span class="severity capital">CAPITAL</span>
+</div>
+<div class="charge-title">302. ATTEMPTED MASS HARM WITH DEADLY WEAPON</div>
+</article>
+<article class="charge-card" data-search="303 ATTEMPTED MURDER OF LAW ENFORCEMENT OFFICER Capital Capital / Major Crimes (301–346)">
+<div class="charge-top">
+<span class="severity capital">CAPITAL</span>
+</div>
+<div class="charge-title">303. ATTEMPTED MURDER OF LAW ENFORCEMENT OFFICER</div>
+</article>
+<article class="charge-card" data-search="304 ATTEMPTED ASSASSINATION OF PUBLIC OFFICIAL Capital Capital / Major Crimes (301–346)">
+<div class="charge-top">
+<span class="severity capital">CAPITAL</span>
+</div>
+<div class="charge-title">304. ATTEMPTED ASSASSINATION OF PUBLIC OFFICIAL</div>
+</article>
+<article class="charge-card" data-search="305 SECOND-DEGREE MURDER (SINGLE VICTIM) Capital Capital / Major Crimes (301–346)">
+<div class="charge-top">
+<span class="severity capital">CAPITAL</span>
+</div>
+<div class="charge-title">305. SECOND-DEGREE MURDER (SINGLE VICTIM)</div>
+</article>
+<article class="charge-card" data-search="306 SECOND-DEGREE MURDER (MULTIPLE VICTIMS) Capital Capital / Major Crimes (301–346)">
+<div class="charge-top">
+<span class="severity capital">CAPITAL</span>
+</div>
+<div class="charge-title">306. SECOND-DEGREE MURDER (MULTIPLE VICTIMS)</div>
+</article>
+<article class="charge-card" data-search="307 FIRST-DEGREE MURDER (SINGLE VICTIM) Capital Capital / Major Crimes (301–346)">
+<div class="charge-top">
+<span class="severity capital">CAPITAL</span>
+</div>
+<div class="charge-title">307. FIRST-DEGREE MURDER (SINGLE VICTIM)</div>
+</article>
+<article class="charge-card" data-search="308 FIRST-DEGREE MURDER (MULTIPLE VICTIMS) Capital Capital / Major Crimes (301–346)">
+<div class="charge-top">
+<span class="severity capital">CAPITAL</span>
+</div>
+<div class="charge-title">308. FIRST-DEGREE MURDER (MULTIPLE VICTIMS)</div>
+</article>
+<article class="charge-card" data-search="309 HIGH-LEVEL THREAT TO STATE (CONFIRMED INTENT) Capital Capital / Major Crimes (301–346)">
+<div class="charge-top">
+<span class="severity capital">CAPITAL</span>
+</div>
+<div class="charge-title">309. HIGH-LEVEL THREAT TO STATE (CONFIRMED INTENT)</div>
+</article>
+<article class="charge-card" data-search="310 ATTEMPTED MASS VIOLENCE IN PUBLIC AREA Capital Capital / Major Crimes (301–346)">
+<div class="charge-top">
+<span class="severity capital">CAPITAL</span>
+</div>
+<div class="charge-title">310. ATTEMPTED MASS VIOLENCE IN PUBLIC AREA</div>
+</article>
+<article class="charge-card" data-search="311 HOSTAGE SITUATION LEADING TO SEVERE HARM Capital Capital / Major Crimes (301–346)">
+<div class="charge-top">
+<span class="severity capital">CAPITAL</span>
+</div>
+<div class="charge-title">311. HOSTAGE SITUATION LEADING TO SEVERE HARM</div>
+</article>
+<article class="charge-card" data-search="312 COORDINATED ATTACK ON LAW ENFORCEMENT Capital Capital / Major Crimes (301–346)">
+<div class="charge-top">
+<span class="severity capital">CAPITAL</span>
+</div>
+<div class="charge-title">312. COORDINATED ATTACK ON LAW ENFORCEMENT</div>
+</article>
+<article class="charge-card" data-search="313 LARGE-SCALE COORDINATED ARMED ATTACK ON CIVILIANS Capital Capital / Major Crimes (301–346)">
+<div class="charge-top">
+<span class="severity capital">CAPITAL</span>
+</div>
+<div class="charge-title">313. LARGE-SCALE COORDINATED ARMED ATTACK ON CIVILIANS</div>
+</article>
+<article class="charge-card" data-search="314 ATTEMPTED USE OF EXPLOSIVES IN PUBLIC (NON-DETONATED) Capital Capital / Major Crimes (301–346)">
+<div class="charge-top">
+<span class="severity capital">CAPITAL</span>
+</div>
+<div class="charge-title">314. ATTEMPTED USE OF EXPLOSIVES IN PUBLIC (NON-DETONATED)</div>
+</article>
+<article class="charge-card" data-search="315 CONFIRMED DETONATION OF EXPLOSIVES ENDANGERING LIFE Capital Capital / Major Crimes (301–346)">
+<div class="charge-top">
+<span class="severity capital">CAPITAL</span>
+</div>
+<div class="charge-title">315. CONFIRMED DETONATION OF EXPLOSIVES ENDANGERING LIFE</div>
+</article>
+<article class="charge-card" data-search="316 ATTEMPTED BIOLOGICAL OR CHEMICAL HARM Capital Capital / Major Crimes (301–346)">
+<div class="charge-top">
+<span class="severity capital">CAPITAL</span>
+</div>
+<div class="charge-title">316. ATTEMPTED BIOLOGICAL OR CHEMICAL HARM</div>
+</article>
+<article class="charge-card" data-search="317 COORDINATED STATE-LEVEL TERROR PLOT (UNEXECUTED) Capital Capital / Major Crimes (301–346)">
+<div class="charge-top">
+<span class="severity capital">CAPITAL</span>
+</div>
+<div class="charge-title">317. COORDINATED STATE-LEVEL TERROR PLOT (UNEXECUTED)</div>
+</article>
+<article class="charge-card" data-search="318 CONFIRMED TERROR PLOT AGAINST GOVERNMENT FACILITY Capital Capital / Major Crimes (301–346)">
+<div class="charge-top">
+<span class="severity capital">CAPITAL</span>
+</div>
+<div class="charge-title">318. CONFIRMED TERROR PLOT AGAINST GOVERNMENT FACILITY</div>
+</article>
+<article class="charge-card" data-search="319 ATTEMPTED ATTACK ON PUBLIC TRANSPORT SYSTEMS Capital Capital / Major Crimes (301–346)">
+<div class="charge-top">
+<span class="severity capital">CAPITAL</span>
+</div>
+<div class="charge-title">319. ATTEMPTED ATTACK ON PUBLIC TRANSPORT SYSTEMS</div>
+</article>
+<article class="charge-card" data-search="320 COORDINATED DESTRUCTION OF CRITICAL INFRASTRUCTURE (LIFE AT RISK) Capital Capital / Major Crimes (301–346)">
+<div class="charge-top">
+<span class="severity capital">CAPITAL</span>
+</div>
+<div class="charge-title">320. COORDINATED DESTRUCTION OF CRITICAL INFRASTRUCTURE (LIFE AT RISK)</div>
+</article>
+<article class="charge-card" data-search="321 LARGE-SCALE FIREBOMBING OR ARSON ENDANGERING LIFE Capital Capital / Major Crimes (301–346)">
+<div class="charge-top">
+<span class="severity capital">CAPITAL</span>
+</div>
+<div class="charge-title">321. LARGE-SCALE FIREBOMBING OR ARSON ENDANGERING LIFE</div>
+</article>
+<article class="charge-card" data-search="322 COORDINATED ARMED RIOT WITH FATAL OUTCOMES Capital Capital / Major Crimes (301–346)">
+<div class="charge-top">
+<span class="severity capital">CAPITAL</span>
+</div>
+<div class="charge-title">322. COORDINATED ARMED RIOT WITH FATAL OUTCOMES</div>
+</article>
+<article class="charge-card" data-search="323 STATE-LEVEL CONSPIRACY TO OVERTHROW GOVERNMENT (NON-SUCCESSFUL) Capital Capital / Major Crimes (301–346)">
+<div class="charge-top">
+<span class="severity capital">CAPITAL</span>
+</div>
+<div class="charge-title">323. STATE-LEVEL CONSPIRACY TO OVERTHROW GOVERNMENT (NON-SUCCESSFUL)</div>
+</article>
+<article class="charge-card" data-search="324 MASS HOSTAGE SITUATION WITH MULTIPLE DEATHS Capital Capital / Major Crimes (301–346)">
+<div class="charge-top">
+<span class="severity capital">CAPITAL</span>
+</div>
+<div class="charge-title">324. MASS HOSTAGE SITUATION WITH MULTIPLE DEATHS</div>
+</article>
+<article class="charge-card" data-search="325 ATTEMPTED ASSASSINATION OF MULTIPLE PUBLIC OFFICIALS Capital Capital / Major Crimes (301–346)">
+<div class="charge-top">
+<span class="severity capital">CAPITAL</span>
+</div>
+<div class="charge-title">325. ATTEMPTED ASSASSINATION OF MULTIPLE PUBLIC OFFICIALS</div>
+</article>
+<article class="charge-card" data-search="326 LARGE-SCALE ORGANIZED ARMED INSURRECTION Capital Capital / Major Crimes (301–346)">
+<div class="charge-top">
+<span class="severity capital">CAPITAL</span>
+</div>
+<div class="charge-title">326. LARGE-SCALE ORGANIZED ARMED INSURRECTION</div>
+</article>
+<article class="charge-card" data-search="327 CONFIRMED ACT OF MASS VIOLENCE RESULTING IN FATALITIES Capital Capital / Major Crimes (301–346)">
+<div class="charge-top">
+<span class="severity capital">CAPITAL</span>
+</div>
+<div class="charge-title">327. CONFIRMED ACT OF MASS VIOLENCE RESULTING IN FATALITIES</div>
+</article>
+<article class="charge-card" data-search="328 COORDINATED ATTACK ON POLICE HEADQUARTERS Capital Capital / Major Crimes (301–346)">
+<div class="charge-top">
+<span class="severity capital">CAPITAL</span>
+</div>
+<div class="charge-title">328. COORDINATED ATTACK ON POLICE HEADQUARTERS</div>
+</article>
+<article class="charge-card" data-search="329 ATTEMPTED AIR TRAFFIC SABOTAGE ENDANGERING LIFE (NON-FATAL) Capital Capital / Major Crimes (301–346)">
+<div class="charge-top">
+<span class="severity capital">CAPITAL</span>
+</div>
+<div class="charge-title">329. ATTEMPTED AIR TRAFFIC SABOTAGE ENDANGERING LIFE (NON-FATAL)</div>
+</article>
+<article class="charge-card" data-search="330 SUCCESSFUL AIR TRAFFIC SABOTAGE RESULTING IN FATALITIES Capital Capital / Major Crimes (301–346)">
+<div class="charge-top">
+<span class="severity capital">CAPITAL</span>
+</div>
+<div class="charge-title">330. SUCCESSFUL AIR TRAFFIC SABOTAGE RESULTING IN FATALITIES</div>
+</article>
+<article class="charge-card" data-search="331 ATTEMPTED LARGE-SCALE WATER SUPPLY POISONING Capital Capital / Major Crimes (301–346)">
+<div class="charge-top">
+<span class="severity capital">CAPITAL</span>
+</div>
+<div class="charge-title">331. ATTEMPTED LARGE-SCALE WATER SUPPLY POISONING</div>
+</article>
+<article class="charge-card" data-search="332 CONFIRMED MASS POISONING EVENT Capital Capital / Major Crimes (301–346)">
+<div class="charge-top">
+<span class="severity capital">CAPITAL</span>
+</div>
+<div class="charge-title">332. CONFIRMED MASS POISONING EVENT</div>
+</article>
+<article class="charge-card" data-search="333 COORDINATED ARMED ATTACK ON HOSPITAL OR SCHOOL Capital Capital / Major Crimes (301–346)">
+<div class="charge-top">
+<span class="severity capital">CAPITAL</span>
+</div>
+<div class="charge-title">333. COORDINATED ARMED ATTACK ON HOSPITAL OR SCHOOL</div>
+</article>
+<article class="charge-card" data-search="334 ATTEMPTED CYBER ATTACK ON STATE SAFETY SYSTEMS (MASS HARM INTENT) Capital Capital / Major Crimes (301–346)">
+<div class="charge-top">
+<span class="severity capital">CAPITAL</span>
+</div>
+<div class="charge-title">334. ATTEMPTED CYBER ATTACK ON STATE SAFETY SYSTEMS (MASS HARM INTENT)</div>
+</article>
+<article class="charge-card" data-search="335 SUCCESSFUL CYBER ATTACK ENDANGERING LIVES Capital Capital / Major Crimes (301–346)">
+<div class="charge-top">
+<span class="severity capital">CAPITAL</span>
+</div>
+<div class="charge-title">335. SUCCESSFUL CYBER ATTACK ENDANGERING LIVES</div>
+</article>
+<article class="charge-card" data-search="336 COORDINATED SABOTAGE OF NUCLEAR OR POWER PLANT Capital Capital / Major Crimes (301–346)">
+<div class="charge-top">
+<span class="severity capital">CAPITAL</span>
+</div>
+<div class="charge-title">336. COORDINATED SABOTAGE OF NUCLEAR OR POWER PLANT</div>
+</article>
+<article class="charge-card" data-search="337 ATTEMPTED BIOLOGICAL WEAPON DEPLOYMENT (NON-EXECUTED) Capital Capital / Major Crimes (301–346)">
+<div class="charge-top">
+<span class="severity capital">CAPITAL</span>
+</div>
+<div class="charge-title">337. ATTEMPTED BIOLOGICAL WEAPON DEPLOYMENT (NON-EXECUTED)</div>
+</article>
+<article class="charge-card" data-search="338 CONFIRMED BIOLOGICAL WEAPON RELEASE Capital Capital / Major Crimes (301–346)">
+<div class="charge-top">
+<span class="severity capital">CAPITAL</span>
+</div>
+<div class="charge-title">338. CONFIRMED BIOLOGICAL WEAPON RELEASE</div>
+</article>
+<article class="charge-card" data-search="339 ATTEMPTED STATE-LEVEL COUP WITH ARMED FORCES Capital Capital / Major Crimes (301–346)">
+<div class="charge-top">
+<span class="severity capital">CAPITAL</span>
+</div>
+<div class="charge-title">339. ATTEMPTED STATE-LEVEL COUP WITH ARMED FORCES</div>
+</article>
+<article class="charge-card" data-search="340 SUCCESSFUL ARMED COUP RESULTING IN DEATH Capital Capital / Major Crimes (301–346)">
+<div class="charge-top">
+<span class="severity capital">CAPITAL</span>
+</div>
+<div class="charge-title">340. SUCCESSFUL ARMED COUP RESULTING IN DEATH</div>
+</article>
+<article class="charge-card" data-search="341 COORDINATED MASS VIOLENCE IN MULTIPLE CITIES Capital Capital / Major Crimes (301–346)">
+<div class="charge-top">
+<span class="severity capital">CAPITAL</span>
+</div>
+<div class="charge-title">341. COORDINATED MASS VIOLENCE IN MULTIPLE CITIES</div>
+</article>
+<article class="charge-card" data-search="342 ATTEMPTED LARGE-SCALE BOMBING OF GOVERNMENT FACILITY Capital Capital / Major Crimes (301–346)">
+<div class="charge-top">
+<span class="severity capital">CAPITAL</span>
+</div>
+<div class="charge-title">342. ATTEMPTED LARGE-SCALE BOMBING OF GOVERNMENT FACILITY</div>
+</article>
+<article class="charge-card" data-search="343 SUCCESSFUL LARGE-SCALE BOMBING RESULTING IN FATALITIES Capital Capital / Major Crimes (301–346)">
+<div class="charge-top">
+<span class="severity capital">CAPITAL</span>
+</div>
+<div class="charge-title">343. SUCCESSFUL LARGE-SCALE BOMBING RESULTING IN FATALITIES</div>
+</article>
+<article class="charge-card" data-search="344 MASS CASUALTY EVENT WITH CONFIRMED INTENT TO KILL Capital Capital / Major Crimes (301–346)">
+<div class="charge-top">
+<span class="severity capital">CAPITAL</span>
+</div>
+<div class="charge-title">344. MASS CASUALTY EVENT WITH CONFIRMED INTENT TO KILL</div>
+</article>
+<article class="charge-card" data-search="345 ATTEMPTED NUCLEAR DEVICE DETONATION (PREVENTED) Capital Capital / Major Crimes (301–346)">
+<div class="charge-top">
+<span class="severity capital">CAPITAL</span>
+</div>
+<div class="charge-title">345. ATTEMPTED NUCLEAR DEVICE DETONATION (PREVENTED)</div>
+</article>
+<article class="charge-card" data-search="346 SUCCESSFUL NUCLEAR DEVICE DETONATION RESULTING IN MASS FATALITIES Capital Capital / Major Crimes (301–346)">
+<div class="charge-top">
+<span class="severity capital">CAPITAL</span>
+</div>
+<div class="charge-title">346. SUCCESSFUL NUCLEAR DEVICE DETONATION RESULTING IN MASS FATALITIES</div>
+</article>
+</div>
+</details>
+<details class="accordion">
+<summary>
+<span>Traffic Violations (401–462)</span>
+<span class="section-count">81 charges</span>
+</summary>
+<div class="section-body">
+<article class="charge-card" data-search="401 PARKING IN A NO-PARKING ZONE Infraction Traffic Violations (401–462)">
+<div class="charge-top">
+<span class="severity infraction">INFRACTION</span>
+</div>
+<div class="charge-title">401. PARKING IN A NO-PARKING ZONE</div>
+</article>
+<article class="charge-card" data-search="402 EXPIRED PARKING METER Infraction Traffic Violations (401–462)">
+<div class="charge-top">
+<span class="severity infraction">INFRACTION</span>
+</div>
+<div class="charge-title">402. EXPIRED PARKING METER</div>
+</article>
+<article class="charge-card" data-search="403 PARKING IN FRONT OF A FIRE HYDRANT Infraction Traffic Violations (401–462)">
+<div class="charge-top">
+<span class="severity infraction">INFRACTION</span>
+</div>
+<div class="charge-title">403. PARKING IN FRONT OF A FIRE HYDRANT</div>
+</article>
+<article class="charge-card" data-search="404 PARKING ON A SIDEWALK OR CROSSWALK Infraction Traffic Violations (401–462)">
+<div class="charge-top">
+<span class="severity infraction">INFRACTION</span>
+</div>
+<div class="charge-title">404. PARKING ON A SIDEWALK OR CROSSWALK</div>
+</article>
+<article class="charge-card" data-search="405 IMPROPERLY PARKED FACING TRAFFIC Infraction Traffic Violations (401–462)">
+<div class="charge-top">
+<span class="severity infraction">INFRACTION</span>
+</div>
+<div class="charge-title">405. IMPROPERLY PARKED FACING TRAFFIC</div>
+</article>
+<article class="charge-card" data-search="406 PARKING IN DISABLED SPOT WITHOUT PERMIT Infraction Traffic Violations (401–462)">
+<div class="charge-top">
+<span class="severity infraction">INFRACTION</span>
+</div>
+<div class="charge-title">406. PARKING IN DISABLED SPOT WITHOUT PERMIT</div>
+</article>
+<article class="charge-card" data-search="407 DOUBLE PARKING Infraction Traffic Violations (401–462)">
+<div class="charge-top">
+<span class="severity infraction">INFRACTION</span>
+</div>
+<div class="charge-title">407. DOUBLE PARKING</div>
+</article>
+<article class="charge-card" data-search="408 PARKING IN LOADING ZONE WITHOUT AUTHORIZATION Infraction Traffic Violations (401–462)">
+<div class="charge-top">
+<span class="severity infraction">INFRACTION</span>
+</div>
+<div class="charge-title">408. PARKING IN LOADING ZONE WITHOUT AUTHORIZATION</div>
+</article>
+<article class="charge-card" data-search="409 OBSTRUCTING DRIVEWAY OR ENTRANCE Infraction Traffic Violations (401–462)">
+<div class="charge-top">
+<span class="severity infraction">INFRACTION</span>
+</div>
+<div class="charge-title">409. OBSTRUCTING DRIVEWAY OR ENTRANCE</div>
+</article>
+<article class="charge-card" data-search="410 VEHICLE IDLING FOR EXCESSIVE TIME Infraction Traffic Violations (401–462)">
+<div class="charge-top">
+<span class="severity infraction">INFRACTION</span>
+</div>
+<div class="charge-title">410. VEHICLE IDLING FOR EXCESSIVE TIME</div>
+</article>
+<article class="charge-card" data-search="411 DRIVING TOO SLOWLY, OBSTRUCTING TRAFFIC Infraction Traffic Violations (401–462)">
+<div class="charge-top">
+<span class="severity infraction">INFRACTION</span>
+</div>
+<div class="charge-title">411. DRIVING TOO SLOWLY, OBSTRUCTING TRAFFIC</div>
+</article>
+<article class="charge-card" data-search="412 FAILURE TO SIGNAL TURN OR LANE CHANGE Infraction Traffic Violations (401–462)">
+<div class="charge-top">
+<span class="severity infraction">INFRACTION</span>
+</div>
+<div class="charge-title">412. FAILURE TO SIGNAL TURN OR LANE CHANGE</div>
+</article>
+<article class="charge-card" data-search="413 FAILURE TO YIELD TO PEDESTRIAN IN CROSSWALK Infraction Traffic Violations (401–462)">
+<div class="charge-top">
+<span class="severity infraction">INFRACTION</span>
+</div>
+<div class="charge-title">413. FAILURE TO YIELD TO PEDESTRIAN IN CROSSWALK</div>
+</article>
+<article class="charge-card" data-search="414 IMPROPER USE OF HORN Infraction Traffic Violations (401–462)">
+<div class="charge-top">
+<span class="severity infraction">INFRACTION</span>
+</div>
+<div class="charge-title">414. IMPROPER USE OF HORN</div>
+</article>
+<article class="charge-card" data-search="415 DRIVING WITH BROKEN TAIL LIGHT Infraction Traffic Violations (401–462)">
+<div class="charge-top">
+<span class="severity infraction">INFRACTION</span>
+</div>
+<div class="charge-title">415. DRIVING WITH BROKEN TAIL LIGHT</div>
+</article>
+<article class="charge-card" data-search="416 EXPIRED VEHICLE REGISTRATION Infraction Traffic Violations (401–462)">
+<div class="charge-top">
+<span class="severity infraction">INFRACTION</span>
+</div>
+<div class="charge-title">416. EXPIRED VEHICLE REGISTRATION</div>
+</article>
+<article class="charge-card" data-search="417 EXPIRED VEHICLE INSPECTION STICKER Infraction Traffic Violations (401–462)">
+<div class="charge-top">
+<span class="severity infraction">INFRACTION</span>
+</div>
+<div class="charge-title">417. EXPIRED VEHICLE INSPECTION STICKER</div>
+</article>
+<article class="charge-card" data-search="418 EXCESSIVE VEHICLE EXHAUST SMOKE Infraction Traffic Violations (401–462)">
+<div class="charge-top">
+<span class="severity infraction">INFRACTION</span>
+</div>
+<div class="charge-title">418. EXCESSIVE VEHICLE EXHAUST SMOKE</div>
+</article>
+<article class="charge-card" data-search="419 UNSECURED LOAD ON VEHICLE Infraction Traffic Violations (401–462)">
+<div class="charge-top">
+<span class="severity infraction">INFRACTION</span>
+</div>
+<div class="charge-title">419. UNSECURED LOAD ON VEHICLE</div>
+</article>
+<article class="charge-card" data-search="420 ILLEGAL WINDOW TINTING Infraction Traffic Violations (401–462)">
+<div class="charge-top">
+<span class="severity infraction">INFRACTION</span>
+</div>
+<div class="charge-title">420. ILLEGAL WINDOW TINTING</div>
+</article>
+<article class="charge-card" data-search="421 MINOR VEHICLE NOISE VIOLATION Infraction Traffic Violations (401–462)">
+<div class="charge-top">
+<span class="severity infraction">INFRACTION</span>
+</div>
+<div class="charge-title">421. MINOR VEHICLE NOISE VIOLATION</div>
+</article>
+<article class="charge-card" data-search="422 SPEEDING (5-10 MPH OVER LIMIT) Infraction Traffic Violations (401–462)">
+<div class="charge-top">
+<span class="severity infraction">INFRACTION</span>
+</div>
+<div class="charge-title">422. SPEEDING (5-10 MPH OVER LIMIT)</div>
+</article>
+<article class="charge-card" data-search="423 SPEEDING (10-20 MPH OVER LIMIT) Infraction Traffic Violations (401–462)">
+<div class="charge-top">
+<span class="severity infraction">INFRACTION</span>
+</div>
+<div class="charge-title">423. SPEEDING (10-20 MPH OVER LIMIT)</div>
+</article>
+<article class="charge-card" data-search="424 EXCESSIVE SPEEDING (35+ MPH OVER LIMIT) Misdemeanor Traffic Violations (401–462)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">424. EXCESSIVE SPEEDING (35+ MPH OVER LIMIT)</div>
+</article>
+<article class="charge-card" data-search="425 DRIVING WITHOUT HEADLIGHTS AT NIGHT Infraction Traffic Violations (401–462)">
+<div class="charge-top">
+<span class="severity infraction">INFRACTION</span>
+</div>
+<div class="charge-title">425. DRIVING WITHOUT HEADLIGHTS AT NIGHT</div>
+</article>
+<article class="charge-card" data-search="426 RUNNING A RED LIGHT OR STOP SIGN Infraction Traffic Violations (401–462)">
+<div class="charge-top">
+<span class="severity infraction">INFRACTION</span>
+</div>
+<div class="charge-title">426. RUNNING A RED LIGHT OR STOP SIGN</div>
+</article>
+<article class="charge-card" data-search="427 ILLEGAL U-TURN / UNSAFE LANE CHANGE Infraction Traffic Violations (401–462)">
+<div class="charge-top">
+<span class="severity infraction">INFRACTION</span>
+</div>
+<div class="charge-title">427. ILLEGAL U-TURN / UNSAFE LANE CHANGE</div>
+</article><article class="charge-card" data-search="428. FAILURE TO STOP AT YIELD SIGN Infraction Traffic Violations (401–462)">
+<div class="charge-top">
+<span class="severity infraction">INFRACTION</span>
+</div>
+<div class="charge-title">428. FAILURE TO STOP AT YIELD SIGN</div>
+</article><article class="charge-card" data-search="429. FAILURE TO OBEY POSTED SPEED LIMIT SIGN Infraction Traffic Violations (401–462)">
+<div class="charge-top">
+<span class="severity infraction">INFRACTION</span>
+</div>
+<div class="charge-title">429. FAILURE TO OBEY POSTED SPEED LIMIT SIGN</div>
+</article><article class="charge-card" data-search="430. UNSAFE FOLLOWING DISTANCE Infraction Traffic Violations (401–462)">
+<div class="charge-top">
+<span class="severity infraction">INFRACTION</span>
+</div>
+<div class="charge-title">430. UNSAFE FOLLOWING DISTANCE</div>
+</article><article class="charge-card" data-search="431. FAILURE TO MAINTAIN LANE Infraction Traffic Violations (401–462)">
+<div class="charge-top">
+<span class="severity infraction">INFRACTION</span>
+</div>
+<div class="charge-title">431. FAILURE TO MAINTAIN LANE</div>
+</article><article class="charge-card" data-search="432. IMPROPER PASSING Infraction Traffic Violations (401–462)">
+<div class="charge-top">
+<span class="severity infraction">INFRACTION</span>
+</div>
+<div class="charge-title">432. IMPROPER PASSING</div>
+</article><article class="charge-card" data-search="433. FAILURE TO USE HEADLIGHTS IN POOR VISIBILITY Infraction Traffic Violations (401–462)">
+<div class="charge-top">
+<span class="severity infraction">INFRACTION</span>
+</div>
+<div class="charge-title">433. FAILURE TO USE HEADLIGHTS IN POOR VISIBILITY</div>
+</article><article class="charge-card" data-search="434. FAILURE TO USE SEATBELT Infraction Traffic Violations (401–462)">
+<div class="charge-top">
+<span class="severity infraction">INFRACTION</span>
+</div>
+<div class="charge-title">434. FAILURE TO USE SEATBELT</div>
+</article><article class="charge-card" data-search="435. IMPROPER USE OF HIGH BEAMS Infraction Traffic Violations (401–462)">
+<div class="charge-top">
+<span class="severity infraction">INFRACTION</span>
+</div>
+<div class="charge-title">435. IMPROPER USE OF HIGH BEAMS</div>
+</article><article class="charge-card" data-search="436. OBSTRUCTED LICENSE PLATE Infraction Traffic Violations (401–462)">
+<div class="charge-top">
+<span class="severity infraction">INFRACTION</span>
+</div>
+<div class="charge-title">436. OBSTRUCTED LICENSE PLATE</div>
+</article><article class="charge-card" data-search="437. FAILURE TO DISPLAY LICENSE PLATE Infraction Traffic Violations (401–462)">
+<div class="charge-top">
+<span class="severity infraction">INFRACTION</span>
+</div>
+<div class="charge-title">437. FAILURE TO DISPLAY LICENSE PLATE</div>
+</article><article class="charge-card" data-search="438. UNAUTHORIZED USE OF SHOULDER / EMERGENCY LANE Infraction Traffic Violations (401–462)">
+<div class="charge-top">
+<span class="severity infraction">INFRACTION</span>
+</div>
+<div class="charge-title">438. UNAUTHORIZED USE OF SHOULDER / EMERGENCY LANE</div>
+</article><article class="charge-card" data-search="439. ILLEGAL PARKING IN BUS ZONE Infraction Traffic Violations (401–462)">
+<div class="charge-top">
+<span class="severity infraction">INFRACTION</span>
+</div>
+<div class="charge-title">439. ILLEGAL PARKING IN BUS ZONE</div>
+</article><article class="charge-card" data-search="441. IMPROPER LEFT TURN / WIDE TURN Infraction Traffic Violations (401–462)">
+<div class="charge-top">
+<span class="severity infraction">INFRACTION</span>
+</div>
+<div class="charge-title">441. IMPROPER LEFT TURN / WIDE TURN</div>
+</article><article class="charge-card" data-search="442. IMPROPER RIGHT TURN / FAILURE TO CURB Infraction Traffic Violations (401–462)">
+<div class="charge-top">
+<span class="severity infraction">INFRACTION</span>
+</div>
+<div class="charge-title">442. IMPROPER RIGHT TURN / FAILURE TO CURB</div>
+</article><article class="charge-card" data-search="443. FAILURE TO YIELD WHEN MERGING Infraction Traffic Violations (401–462)">
+<div class="charge-top">
+<span class="severity infraction">INFRACTION</span>
+</div>
+<div class="charge-title">443. FAILURE TO YIELD WHEN MERGING</div>
+</article><article class="charge-card" data-search="444. IMPROPER BACKING Infraction Traffic Violations (401–462)">
+<div class="charge-top">
+<span class="severity infraction">INFRACTION</span>
+</div>
+<div class="charge-title">444. IMPROPER BACKING</div>
+</article><article class="charge-card" data-search="445. ILLEGAL USE OF EMERGENCY FLASHERS (NON-EMERGENCY) Infraction Traffic Violations (401–462)">
+<div class="charge-top">
+<span class="severity infraction">INFRACTION</span>
+</div>
+<div class="charge-title">445. ILLEGAL USE OF EMERGENCY FLASHERS (NON-EMERGENCY)</div>
+</article><article class="charge-card" data-search="446. LOUD MUSIC / AMPLIFIED SOUND FROM VEHICLE Infraction Traffic Violations (401–462)">
+<div class="charge-top">
+<span class="severity infraction">INFRACTION</span>
+</div>
+<div class="charge-title">446. LOUD MUSIC / AMPLIFIED SOUND FROM VEHICLE</div>
+</article><article class="charge-card" data-search="447. ILLEGAL STOPPING IN ROADWAY Infraction Traffic Violations (401–462)">
+<div class="charge-top">
+<span class="severity infraction">INFRACTION</span>
+</div>
+<div class="charge-title">447. ILLEGAL STOPPING IN ROADWAY</div>
+</article>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<article class="charge-card" data-search="428 FAILURE TO YIELD TO EMERGENCY VEHICLE Misdemeanor Traffic Violations (401–462)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">428. FAILURE TO YIELD TO EMERGENCY VEHICLE</div>
+</article>
+<article class="charge-card" data-search="429 FAILURE TO STOP FOR SCHOOL BUS Misdemeanor Traffic Violations (401–462)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">429. FAILURE TO STOP FOR SCHOOL BUS</div>
+</article>
+<article class="charge-card" data-search="430 AGGRESSIVE TAILGATING Misdemeanor Traffic Violations (401–462)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">430. AGGRESSIVE TAILGATING</div>
+</article>
+<article class="charge-card" data-search="431 OVERTAKING VEHICLE IN NO-PASSING ZONE Misdemeanor Traffic Violations (401–462)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">431. OVERTAKING VEHICLE IN NO-PASSING ZONE</div>
+</article>
+<article class="charge-card" data-search="432 RECKLESS LANE WEAVING Misdemeanor Traffic Violations (401–462)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">432. RECKLESS LANE WEAVING</div>
+</article>
+<article class="charge-card" data-search="433 WRONG WAY DRIVING Felony Traffic Violations (401–462)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">433. WRONG WAY DRIVING</div>
+</article>
+<article class="charge-card" data-search="434 FAILURE TO STOP AT RAILROAD CROSSING Misdemeanor Traffic Violations (401–462)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">434. FAILURE TO STOP AT RAILROAD CROSSING</div>
+</article>
+<article class="charge-card" data-search="435 UNSAFE BACKING OR REVERSING Misdemeanor Traffic Violations (401–462)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">435. UNSAFE BACKING OR REVERSING</div>
+</article>
+<article class="charge-card" data-search="436 BLOCKING INTERSECTION Misdemeanor Traffic Violations (401–462)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">436. BLOCKING INTERSECTION</div>
+</article>
+<article class="charge-card" data-search="437 IMPROPER TURN ON RED SIGNAL Infraction Traffic Violations (401–462)">
+<div class="charge-top">
+<span class="severity infraction">INFRACTION</span>
+</div>
+<div class="charge-title">437. IMPROPER TURN ON RED SIGNAL</div>
+</article>
+<article class="charge-card" data-search="438 DRIVING WITHOUT A VALID LICENSE Misdemeanor Traffic Violations (401–462)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">438. DRIVING WITHOUT A VALID LICENSE</div>
+</article>
+<article class="charge-card" data-search="439 DRIVING WITH SUSPENDED OR REVOKED LICENSE Misdemeanor Traffic Violations (401–462)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">439. DRIVING WITH SUSPENDED OR REVOKED LICENSE</div>
+</article>
+<article class="charge-card" data-search="440 FAILURE TO CARRY PROOF OF INSURANCE Infraction Traffic Violations (401–462)">
+<div class="charge-top">
+<span class="severity infraction">INFRACTION</span>
+</div>
+<div class="charge-title">440. FAILURE TO CARRY PROOF OF INSURANCE</div>
+</article>
+<article class="charge-card" data-search="441 DRIVING AN UNREGISTERED VEHICLE Misdemeanor Traffic Violations (401–462)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">441. DRIVING AN UNREGISTERED VEHICLE</div>
+</article>
+<article class="charge-card" data-search="442 FAILURE TO SECURE CHILD IN SAFETY SEAT Misdemeanor Traffic Violations (401–462)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">442. FAILURE TO SECURE CHILD IN SAFETY SEAT</div>
+</article>
+<article class="charge-card" data-search="443 MINOR VEHICLE COLLISION CAUSED BY NEGLIGENCE Misdemeanor Traffic Violations (401–462)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">443. MINOR VEHICLE COLLISION CAUSED BY NEGLIGENCE</div>
+</article>
+<article class="charge-card" data-search="444 USE OF MOBILE DEVICE WHILE DRIVING Misdemeanor Traffic Violations (401–462)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">444. USE OF MOBILE DEVICE WHILE DRIVING</div>
+</article>
+<article class="charge-card" data-search="445 DRIVING WITH HAZARDOUS MATERIALS (IMPROPERLY SECURED) Misdemeanor Traffic Violations (401–462)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">445. DRIVING WITH HAZARDOUS MATERIALS (IMPROPERLY SECURED)</div>
+</article>
+<article class="charge-card" data-search="446 DRIVING WHILE EXHAUSTED OR FALLING ASLEEP Misdemeanor Traffic Violations (401–462)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">446. DRIVING WHILE EXHAUSTED OR FALLING ASLEEP</div>
+</article>
+<article class="charge-card" data-search="447 MINOR OFF-ROADING IN RESTRICTED AREAS Misdemeanor Traffic Violations (401–462)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">447. MINOR OFF-ROADING IN RESTRICTED AREAS</div>
+</article>
+<article class="charge-card" data-search="448 FAILURE TO OBEY TEMPORARY TRAFFIC CONTROL Misdemeanor Traffic Violations (401–462)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">448. FAILURE TO OBEY TEMPORARY TRAFFIC CONTROL</div>
+</article>
+<article class="charge-card" data-search="449 EVADING LAW ENFORCEMENT (VEHICLE) Felony Traffic Violations (401–462)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">449. EVADING LAW ENFORCEMENT (VEHICLE)</div>
+</article>
+<article class="charge-card" data-search="450 STREET RACING / EXHIBITION DRIVING Felony Traffic Violations (401–462)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">450. STREET RACING / EXHIBITION DRIVING</div>
+</article>
+<article class="charge-card" data-search="451 FELONY RECKLESS DRIVING RESULTING IN INJURY Felony Traffic Violations (401–462)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">451. FELONY RECKLESS DRIVING RESULTING IN INJURY</div>
+</article>
+<article class="charge-card" data-search="452 FELONY HIT AND RUN (NON-FATAL INJURY) Felony Traffic Violations (401–462)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">452. FELONY HIT AND RUN (NON-FATAL INJURY)</div>
+</article>
+<article class="charge-card" data-search="453 FELONY RECKLESS DRIVING Felony Traffic Violations (401–462)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">453. FELONY RECKLESS DRIVING</div>
+</article>
+<article class="charge-card" data-search="454 FELONY VEHICULAR ENDANGERMENT OF MULTIPLE PEOPLE Felony Traffic Violations (401–462)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">454. FELONY VEHICULAR ENDANGERMENT OF MULTIPLE PEOPLE</div>
+</article>
+<article class="charge-card" data-search="455 USING VEHICLE TO THREATEN OR INTIMIDATE Felony Traffic Violations (401–462)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">455. USING VEHICLE TO THREATEN OR INTIMIDATE</div>
+</article>
+<article class="charge-card" data-search="456 OPERATING VEHICLE DURING FELONY CRIME Felony Traffic Violations (401–462)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">456. OPERATING VEHICLE DURING FELONY CRIME</div>
+</article>
+<article class="charge-card" data-search="457 ATTEMPTED VEHICULAR ASSAULT ON LAW ENFORCEMENT Felony Traffic Violations (401–462)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">457. ATTEMPTED VEHICULAR ASSAULT ON LAW ENFORCEMENT</div>
+</article>
+<article class="charge-card" data-search="458 ATTEMPTED VEHICULAR MANSLAUGHTER (PREVENTED) Felony Traffic Violations (401–462)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">458. ATTEMPTED VEHICULAR MANSLAUGHTER (PREVENTED)</div>
+</article>
+<article class="charge-card" data-search="459 VEHICULAR MANSLAUGHTER (CONFIRMED FATALITY) Capital Traffic Violations (401–462)">
+<div class="charge-top">
+<span class="severity capital">CAPITAL</span>
+</div>
+<div class="charge-title">459. VEHICULAR MANSLAUGHTER (CONFIRMED FATALITY)</div>
+</article>
+<article class="charge-card" data-search="460 COORDINATED STREET RACING EVENT WITH INJURIES Felony Traffic Violations (401–462)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">460. COORDINATED STREET RACING EVENT WITH INJURIES</div>
+</article>
+<article class="charge-card" data-search="461 ARMED VEHICLE PURSUIT ENDANGERING CIVILIANS Felony Traffic Violations (401–462)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">461. ARMED VEHICLE PURSUIT ENDANGERING CIVILIANS</div>
+</article>
+<article class="charge-card" data-search="462 LARGE-SCALE VEHICLE BLOCKADE CAUSING EMERGENCY RISK Felony Traffic Violations (401–462)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">462. LARGE-SCALE VEHICLE BLOCKADE CAUSING EMERGENCY RISK</div>
+</article>
+</div>
+</details>
+<details class="accordion">
+<summary>
+<span>Government / LEO Misconduct (501–545)</span>
+<span class="section-count">45 charges</span>
+</summary>
+<div class="section-body">
+<article class="charge-card" data-search="501 FAILURE TO WEAR PROPER UNIFORM Infraction Government / LEO Misconduct (501–545)">
+<div class="charge-top">
+<span class="severity infraction">INFRACTION</span>
+</div>
+<div class="charge-title">501. FAILURE TO WEAR PROPER UNIFORM</div>
+</article>
+<article class="charge-card" data-search="502 FAILURE TO DISPLAY PROPER IDENTIFICATION BADGE Infraction Government / LEO Misconduct (501–545)">
+<div class="charge-top">
+<span class="severity infraction">INFRACTION</span>
+</div>
+<div class="charge-title">502. FAILURE TO DISPLAY PROPER IDENTIFICATION BADGE</div>
+</article>
+<article class="charge-card" data-search="503 FAILURE TO SECURE WEAPON PROPERLY Infraction Government / LEO Misconduct (501–545)">
+<div class="charge-top">
+<span class="severity infraction">INFRACTION</span>
+</div>
+<div class="charge-title">503. FAILURE TO SECURE WEAPON PROPERLY</div>
+</article>
+<article class="charge-card" data-search="504 UNSAFE DRIVING OF EMERGENCY VEHICLE Infraction Government / LEO Misconduct (501–545)">
+<div class="charge-top">
+<span class="severity infraction">INFRACTION</span>
+</div>
+<div class="charge-title">504. UNSAFE DRIVING OF EMERGENCY VEHICLE</div>
+</article>
+<article class="charge-card" data-search="505 MISUSE OF SIRENS OR EMERGENCY LIGHTS Infraction Government / LEO Misconduct (501–545)">
+<div class="charge-top">
+<span class="severity infraction">INFRACTION</span>
+</div>
+<div class="charge-title">505. MISUSE OF SIRENS OR EMERGENCY LIGHTS</div>
+</article>
+<article class="charge-card" data-search="506 FAILURE TO RESPOND TO EMERGENCY CALL Infraction Government / LEO Misconduct (501–545)">
+<div class="charge-top">
+<span class="severity infraction">INFRACTION</span>
+</div>
+<div class="charge-title">506. FAILURE TO RESPOND TO EMERGENCY CALL</div>
+</article>
+<article class="charge-card" data-search="507 LEAVING POST WITHOUT AUTHORIZATION Infraction Government / LEO Misconduct (501–545)">
+<div class="charge-top">
+<span class="severity infraction">INFRACTION</span>
+</div>
+<div class="charge-title">507. LEAVING POST WITHOUT AUTHORIZATION</div>
+</article>
+<article class="charge-card" data-search="508 FAILURE TO FILE REQUIRED REPORTS Infraction Government / LEO Misconduct (501–545)">
+<div class="charge-top">
+<span class="severity infraction">INFRACTION</span>
+</div>
+<div class="charge-title">508. FAILURE TO FILE REQUIRED REPORTS</div>
+</article>
+<article class="charge-card" data-search="509 LOSS OR MISPLACEMENT OF GOVERNMENT EQUIPMENT Infraction Government / LEO Misconduct (501–545)">
+<div class="charge-top">
+<span class="severity infraction">INFRACTION</span>
+</div>
+<div class="charge-title">509. LOSS OR MISPLACEMENT OF GOVERNMENT EQUIPMENT</div>
+</article>
+<article class="charge-card" data-search="510 FAILURE TO MAINTAIN DEPARTMENT EQUIPMENT Infraction Government / LEO Misconduct (501–545)">
+<div class="charge-top">
+<span class="severity infraction">INFRACTION</span>
+</div>
+<div class="charge-title">510. FAILURE TO MAINTAIN DEPARTMENT EQUIPMENT</div>
+</article>
+<article class="charge-card" data-search="511 UNAUTHORIZED USE OF GOVERNMENT VEHICLE FOR PERSONAL TASKS Infraction Government / LEO Misconduct (501–545)">
+<div class="charge-top">
+<span class="severity infraction">INFRACTION</span>
+</div>
+<div class="charge-title">511. UNAUTHORIZED USE OF GOVERNMENT VEHICLE FOR PERSONAL TASKS</div>
+</article>
+<article class="charge-card" data-search="512 IMPROPER VEHICLE PARKING IN OFFICIAL CAPACITY Infraction Government / LEO Misconduct (501–545)">
+<div class="charge-top">
+<span class="severity infraction">INFRACTION</span>
+</div>
+<div class="charge-title">512. IMPROPER VEHICLE PARKING IN OFFICIAL CAPACITY</div>
+</article>
+<article class="charge-card" data-search="513 USE OF DEPARTMENT COMMUNICATION CHANNELS FOR PERSONAL REASONS Infraction Government / LEO Misconduct (501–545)">
+<div class="charge-top">
+<span class="severity infraction">INFRACTION</span>
+</div>
+<div class="charge-title">513. USE OF DEPARTMENT COMMUNICATION CHANNELS FOR PERSONAL REASONS</div>
+</article>
+<article class="charge-card" data-search="514 UNPROFESSIONAL LANGUAGE OR BEHAVIOR IN PUBLIC Infraction Government / LEO Misconduct (501–545)">
+<div class="charge-top">
+<span class="severity infraction">INFRACTION</span>
+</div>
+<div class="charge-title">514. UNPROFESSIONAL LANGUAGE OR BEHAVIOR IN PUBLIC</div>
+</article>
+<article class="charge-card" data-search="515 MINOR BREACH OF CONFIDENTIAL INFORMATION (NON-HARMFUL) Infraction Government / LEO Misconduct (501–545)">
+<div class="charge-top">
+<span class="severity infraction">INFRACTION</span>
+</div>
+<div class="charge-title">515. MINOR BREACH OF CONFIDENTIAL INFORMATION (NON-HARMFUL)</div>
+</article>
+<article class="charge-card" data-search="516 DELAY IN RESPONDING TO DISPATCH INSTRUCTIONS Infraction Government / LEO Misconduct (501–545)">
+<div class="charge-top">
+<span class="severity infraction">INFRACTION</span>
+</div>
+<div class="charge-title">516. DELAY IN RESPONDING TO DISPATCH INSTRUCTIONS</div>
+</article>
+<article class="charge-card" data-search="517 NEGLECTING ROUTINE PATROL DUTIES Infraction Government / LEO Misconduct (501–545)">
+<div class="charge-top">
+<span class="severity infraction">INFRACTION</span>
+</div>
+<div class="charge-title">517. NEGLECTING ROUTINE PATROL DUTIES</div>
+</article>
+<article class="charge-card" data-search="518. UNAUTHORIZED ACCESS TO RESTRICTED GOVERNMENT SYSTEMS Felony Government / LEO Misconduct (501–545)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">518. UNAUTHORIZED ACCESS TO RESTRICTED GOVERNMENT SYSTEMS</div>
+</article>
+<article class="charge-card" data-search="519 UNLAWFUL USE OF FORCE (EXCESSIVE) Felony Government / LEO Misconduct (501–545)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">519. UNLAWFUL USE OF FORCE (EXCESSIVE)</div>
+</article>
+<article class="charge-card" data-search="520 WRONGFUL DETENTION OF CITIZEN Felony Government / LEO Misconduct (501–545)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">520. WRONGFUL DETENTION OF CITIZEN</div>
+</article>
+<article class="charge-card" data-search="521 ABUSE OF AUTHORITY / UNLAWFUL ARREST Felony Government / LEO Misconduct (501–545)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">521. ABUSE OF AUTHORITY / UNLAWFUL ARREST</div>
+</article>
+<article class="charge-card" data-search="522 FABRICATION OF EVIDENCE Felony Government / LEO Misconduct (501–545)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">522. FABRICATION OF EVIDENCE</div>
+</article>
+<article class="charge-card" data-search="523 CORRUPTION OR BRIBERY WITHIN DEPARTMENT Felony Government / LEO Misconduct (501–545)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">523. CORRUPTION OR BRIBERY WITHIN DEPARTMENT</div>
+</article>
+<article class="charge-card" data-search="524 EVIDENCE TAMPERING TO PROTECT SELF OR OTHERS Felony Government / LEO Misconduct (501–545)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">524. EVIDENCE TAMPERING TO PROTECT SELF OR OTHERS</div>
+</article>
+<article class="charge-card" data-search="525 NEGLIGENT DISCHARGE OF FIREARM Felony Government / LEO Misconduct (501–545)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">525. NEGLIGENT DISCHARGE OF FIREARM</div>
+</article>
+<article class="charge-card" data-search="526 UNLAWFUL SURVEILLANCE OF CITIZENS Felony Government / LEO Misconduct (501–545)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">526. UNLAWFUL SURVEILLANCE OF CITIZENS</div>
+</article>
+<article class="charge-card" data-search="527 THREATENING CIVILIANS WHILE ON DUTY Felony Government / LEO Misconduct (501–545)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">527. THREATENING CIVILIANS WHILE ON DUTY</div>
+</article>
+<article class="charge-card" data-search="528 ASSAULTING CIVILIAN OR DETAINEE WHILE ON DUTY Felony Government / LEO Misconduct (501–545)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">528. ASSAULTING CIVILIAN OR DETAINEE WHILE ON DUTY</div>
+</article>
+<article class="charge-card" data-search="529 THEFT OR MISUSE OF SEIZED PROPERTY Felony Government / LEO Misconduct (501–545)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">529. THEFT OR MISUSE OF SEIZED PROPERTY</div>
+</article>
+<article class="charge-card" data-search="530 ACCEPTING BRIBES TO OVERLOOK CRIME Felony Government / LEO Misconduct (501–545)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">530. ACCEPTING BRIBES TO OVERLOOK CRIME</div>
+</article>
+<article class="charge-card" data-search="531 UNAUTHORIZED USE OF LETHAL FORCE Felony Government / LEO Misconduct (501–545)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">531. UNAUTHORIZED USE OF LETHAL FORCE</div>
+</article>
+<article class="charge-card" data-search="532 INTERFERING WITH INTERNAL INVESTIGATIONS Felony Government / LEO Misconduct (501–545)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">532. INTERFERING WITH INTERNAL INVESTIGATIONS</div>
+</article>
+<article class="charge-card" data-search="533 PROVIDING FALSE TESTIMONY IN COURT Felony Government / LEO Misconduct (501–545)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">533. PROVIDING FALSE TESTIMONY IN COURT</div>
+</article>
+<article class="charge-card" data-search="534 GROSS NEGLIGENCE LEADING TO CIVILIAN HARM Felony Government / LEO Misconduct (501–545)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">534. GROSS NEGLIGENCE LEADING TO CIVILIAN HARM</div>
+</article>
+<article class="charge-card" data-search="535 USING GOVERNMENT VEHICLE TO COMMIT CRIME Felony Government / LEO Misconduct (501–545)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">535. USING GOVERNMENT VEHICLE TO COMMIT CRIME</div>
+</article>
+<article class="charge-card" data-search="536 UNAUTHORIZED DATA REMOVAL FROM GOVERNMENT SYSTEMS Felony Government / LEO Misconduct (501–545)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">536. UNAUTHORIZED DATA REMOVAL FROM GOVERNMENT SYSTEMS</div>
+</article>
+<article class="charge-card" data-search="537 HARASSMENT OR INTIMIDATION OF WITNESS Felony Government / LEO Misconduct (501–545)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">537. HARASSMENT OR INTIMIDATION OF WITNESS</div>
+</article>
+<article class="charge-card" data-search="538 ORGANIZED CORRUPTION CONSPIRACY Felony Government / LEO Misconduct (501–545)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">538. ORGANIZED CORRUPTION CONSPIRACY</div>
+</article>
+<article class="charge-card" data-search="539 UNAUTHORIZED RELEASE OF SENSITIVE INFORMATION (MAJOR LEAK) Felony Government / LEO Misconduct (501–545)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">539. UNAUTHORIZED RELEASE OF SENSITIVE INFORMATION (MAJOR LEAK)</div>
+</article>
+<article class="charge-card" data-search="540 USE OF AUTHORITY TO COVER UP MAJOR CRIME Felony Government / LEO Misconduct (501–545)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">540. USE OF AUTHORITY TO COVER UP MAJOR CRIME</div>
+</article>
+<article class="charge-card" data-search="541 LARGE-SCALE CONSPIRACY BETWEEN MULTIPLE OFFICIALS Felony Government / LEO Misconduct (501–545)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">541. LARGE-SCALE CONSPIRACY BETWEEN MULTIPLE OFFICIALS</div>
+</article>
+<article class="charge-card" data-search="542 ABUSE OF COMMAND POSITION LEADING TO CIVIL RIGHTS VIOLATIONS Felony Government / LEO Misconduct (501–545)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">542. ABUSE OF COMMAND POSITION LEADING TO CIVIL RIGHTS VIOLATIONS</div>
+</article>
+<article class="charge-card" data-search="543 COORDINATED EVIDENCE DESTRUCTION TO PROTECT CRIMINALS Felony Government / LEO Misconduct (501–545)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">543. COORDINATED EVIDENCE DESTRUCTION TO PROTECT CRIMINALS</div>
+</article>
+<article class="charge-card" data-search="544 USING GOVERNMENT FORCE IN ORGANIZED CRIME ACTIVITY Felony Government / LEO Misconduct (501–545)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">544. USING GOVERNMENT FORCE IN ORGANIZED CRIME ACTIVITY</div>
+</article>
+<article class="charge-card" data-search="545 REPEATED SEVERE MISCONDUCT RESULTING IN LOSS OF LIFE Capital Government / LEO Misconduct (501–545)">
+<div class="charge-top">
+<span class="severity capital">CAPITAL</span>
+</div>
+<div class="charge-title">545. REPEATED SEVERE MISCONDUCT RESULTING IN LOSS OF LIFE</div>
+</article>
+</div>
+</details>
+<details class="accordion">
+<summary>
+<span>Weapons, Insurance &amp; Other (601–621)</span>
+<span class="section-count">23 charges</span>
+</summary>
+<div class="section-body">
+<article class="charge-card" data-search="601 FAILURE TO MAINTAIN ACTIVE VEHICLE INSURANCE Infraction Weapons, Insurance &amp; Other (601–621)">
+<div class="charge-top">
+<span class="severity infraction">INFRACTION</span>
+</div>
+<div class="charge-title">601. FAILURE TO MAINTAIN ACTIVE VEHICLE INSURANCE</div>
+</article>
+<article class="charge-card" data-search="602 DRIVING WITHOUT PROOF OF INSURANCE Misdemeanor Weapons, Insurance &amp; Other (601–621)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">602. DRIVING WITHOUT PROOF OF INSURANCE</div>
+</article>
+<article class="charge-card" data-search="603 OPERATING VEHICLE WITH EXPIRED INSURANCE Misdemeanor Weapons, Insurance &amp; Other (601–621)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">603. OPERATING VEHICLE WITH EXPIRED INSURANCE</div>
+</article>
+<article class="charge-card" data-search="604 REPEATED FAILURE TO MAINTAIN INSURANCE Misdemeanor Weapons, Insurance &amp; Other (601–621)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">604. REPEATED FAILURE TO MAINTAIN INSURANCE</div>
+</article>
+<article class="charge-card" data-search="605 OPERATING COMMERCIAL VEHICLE WITHOUT INSURANCE Felony Weapons, Insurance &amp; Other (601–621)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">605. OPERATING COMMERCIAL VEHICLE WITHOUT INSURANCE</div>
+</article>
+<article class="charge-card" data-search="606 BRANDISHING A DEADLY WEAPON Misdemeanor Weapons, Insurance &amp; Other (601–621)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">606. BRANDISHING A DEADLY WEAPON</div>
+</article>
+<article class="charge-card" data-search="607 UNLAWFUL OPEN CARRY OF A FIREARM Misdemeanor Weapons, Insurance &amp; Other (601–621)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">607. UNLAWFUL OPEN CARRY OF A FIREARM</div>
+</article>
+<article class="charge-card" data-search="608 ESCAPE FROM CUSTODY (NON-VIOLENT) Misdemeanor Weapons, Insurance &amp; Other (601–621)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">608. ESCAPE FROM CUSTODY (NON-VIOLENT)</div>
+</article>
+<article class="charge-card" data-search="609 ABUSE OF A CORPSE Misdemeanor Weapons, Insurance &amp; Other (601–621)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">609. ABUSE OF A CORPSE</div>
+</article>
+<article class="charge-card" data-search="610 POSSESSION OF A FIREARM IN A PROHIBITED AREA Misdemeanor Weapons, Insurance &amp; Other (601–621)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">610. POSSESSION OF A FIREARM IN A PROHIBITED AREA</div>
+</article>
+<article class="charge-card" data-search="611 BRANDISHING A DEADLY WEAPON AT A PEACE OFFICER Felony Weapons, Insurance &amp; Other (601–621)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">611. BRANDISHING A DEADLY WEAPON AT A PEACE OFFICER</div>
+</article>
+<article class="charge-card" data-search="612 CARRYING A FIREARM WHILE COMMITTING A FELONY Felony Weapons, Insurance &amp; Other (601–621)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">612. CARRYING A FIREARM WHILE COMMITTING A FELONY</div>
+</article>
+<article class="charge-card" data-search="613 POSSESSION OF A STOLEN FIREARM Felony Weapons, Insurance &amp; Other (601–621)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">613. POSSESSION OF A STOLEN FIREARM</div>
+</article>
+<article class="charge-card" data-search="614 RESISTING ARREST (VIOLENT) Felony Weapons, Insurance &amp; Other (601–621)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">614. RESISTING ARREST (VIOLENT)</div>
+</article>
+<article class="charge-card" data-search="615 STRIKING FIXED ROADWAY OBJECT (STREET POLE / SIGN / LIGHT) Infraction Weapons, Insurance &amp; Other (601–621)">
+<div class="charge-top">
+<span class="severity infraction">INFRACTION</span>
+</div>
+<div class="charge-title">615. STRIKING FIXED ROADWAY OBJECT (STREET POLE / SIGN / LIGHT)</div>
+</article>
+<article class="charge-card" data-search="615 FELON IN POSSESSION OF A FIREARM Felony Weapons, Insurance &amp; Other (601–621)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">615. FELON IN POSSESSION OF A FIREARM</div>
+</article>
+<article class="charge-card" data-search="616 UNLICENSED POSSESSION OF A FIREARM Felony Weapons, Insurance &amp; Other (601–621)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">616. UNLICENSED POSSESSION OF A FIREARM</div>
+</article>
+<article class="charge-card" data-search="617 EVASION OF A POLICE OFFICER Misdemeanor Weapons, Insurance &amp; Other (601–621)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">617. EVASION OF A POLICE OFFICER</div>
+</article>
+<article class="charge-card" data-search="617 UNLAWFUL CARRY OF A FIREARM Misdemeanor Weapons, Insurance &amp; Other (601–621)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">617. UNLAWFUL CARRY OF A FIREARM</div>
+</article>
+<article class="charge-card" data-search="618 IMPERSONATION OF A LAW ENFORCEMENT OFFICER Felony Weapons, Insurance &amp; Other (601–621)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">618. IMPERSONATION OF A LAW ENFORCEMENT OFFICER</div>
+</article>
+<article class="charge-card" data-search="619 IMPERSONATION OF EMERGENCY MEDICAL SERVICES Misdemeanor Weapons, Insurance &amp; Other (601–621)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">619. IMPERSONATION OF EMERGENCY MEDICAL SERVICES</div>
+</article>
+<article class="charge-card" data-search="620 IMPERSONATION OF A FIRE DEPARTMENT MEMBER Misdemeanor Weapons, Insurance &amp; Other (601–621)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">620. IMPERSONATION OF A FIRE DEPARTMENT MEMBER</div>
+</article>
+<article class="charge-card" data-search="621 POSSESSION OF AN ILLEGAL FIREARM Felony Weapons, Insurance &amp; Other (601–621)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">621. POSSESSION OF AN ILLEGAL FIREARM</div>
+</article>
+</div>
+</details>
+<details class="accordion">
+<summary>
+<span>Federal / Military Offenses (701–708)</span>
+<span class="section-count">8 charges</span>
+</summary>
+<div class="section-body">
+<article class="charge-card" data-search="701 UNLAWFUL ARREST OF PROTECTED AGENT Felony Federal / Military Offenses (701–708)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">701. UNLAWFUL ARREST OF PROTECTED AGENT</div>
+</article>
+<article class="charge-card" data-search="702 DETAINMENT OF AGENT ACTING UNDER IMMUNITY Felony Federal / Military Offenses (701–708)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">702. DETAINMENT OF AGENT ACTING UNDER IMMUNITY</div>
+</article>
+<article class="charge-card" data-search="703 TAMPERING WITH FEDERAL PROPERTY OR EQUIPMENT Felony Federal / Military Offenses (701–708)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">703. TAMPERING WITH FEDERAL PROPERTY OR EQUIPMENT</div>
+</article>
+<article class="charge-card" data-search="704 TAMPERING WITH FEDERAL EVIDENCE, RECORDS, OR DOCUMENTS Felony Federal / Military Offenses (701–708)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">704. TAMPERING WITH FEDERAL EVIDENCE, RECORDS, OR DOCUMENTS</div>
+</article>
+<article class="charge-card" data-search="705 INTERFERENCE WITH VNG OR MILITARY POLICE DUTIES Felony Federal / Military Offenses (701–708)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">705. INTERFERENCE WITH VNG OR MILITARY POLICE DUTIES</div>
+</article>
+<article class="charge-card" data-search="706 OBSTRUCTION OF VNG OR MILITARY POLICE PERSONNEL Felony Federal / Military Offenses (701–708)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">706. OBSTRUCTION OF VNG OR MILITARY POLICE PERSONNEL</div>
+</article>
+<article class="charge-card" data-search="707 UNAUTHORIZED ENTRY INTO VNG OR MILITARY POLICE FACILITY Felony Federal / Military Offenses (701–708)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">707. UNAUTHORIZED ENTRY INTO VNG OR MILITARY POLICE FACILITY</div>
+</article>
+<article class="charge-card" data-search="708 TAMPERING WITH VNG OR MILITARY POLICE EQUIPMENT Felony Federal / Military Offenses (701–708)">
+<div class="charge-top">
+<span class="severity felony">FELONY</span>
+</div>
+<div class="charge-title">708. TAMPERING WITH VNG OR MILITARY POLICE EQUIPMENT</div>
+</article>
+</div>
+</details>
+<details class="accordion">
+<summary>
+<span>Outstanding Citations (846)</span>
+<span class="section-count">1 charges</span>
+</summary>
+<div class="section-body">
+<article class="charge-card" data-search="846 UNPAID/OUTSTANDING CITATIONS Misdemeanor Outstanding Citations (846)">
+<div class="charge-top">
+<span class="severity misdemeanor">MISDEMEANOR</span>
+</div>
+<div class="charge-title">846. UNPAID/OUTSTANDING CITATIONS</div>
+</article>
+</div>
+</details>
+</section>
+<div class="no-results" id="noResults">No charges match your search.</div>
+</main>
+<script>
+(function () {
+  const totalCharges = 378;
+  const searchInput = document.getElementById("searchInput");
+  const clearButton = document.getElementById("clearButton");
+  const statusLine = document.getElementById("statusLine");
+  const noResults = document.getElementById("noResults");
+  const sections = Array.from(document.querySelectorAll(".accordion"));
+
+  function normalizeText(value) {
+    return String(value || "")
+      .toLowerCase()
+      .replace(/[\u2010-\u2015]/g, "-")
+      .replace(/[^a-z0-9]+/g, " ")
+      .trim();
+  }
+
+  function filterCharges() {
+    const query = normalizeText(searchInput.value);
+    let visibleCharges = 0;
+
+    sections.forEach(section => {
+      let visibleInSection = 0;
+      const cards = Array.from(section.querySelectorAll(".charge-card"));
+
+      cards.forEach(card => {
+        const searchableText = normalizeText(card.dataset.search + " " + card.textContent);
+        const shouldShow = query === "" || searchableText.includes(query);
+
+        card.style.display = shouldShow ? "block" : "none";
+
+        if (shouldShow) {
+          visibleCharges += 1;
+          visibleInSection += 1;
+        }
+      });
+
+      section.style.display = visibleInSection > 0 ? "block" : "none";
+
+      if (query !== "" && visibleInSection > 0) {
+        section.open = true;
+      }
+
+      if (query === "") {
+        section.open = false;
+      }
+    });
+
+    statusLine.textContent = query === ""
+      ? "Showing " + totalCharges + " total charge(s)."
+      : "Showing " + visibleCharges + " matching charge(s).";
+
+    noResults.style.display = visibleCharges === 0 ? "block" : "none";
+  }
+
+  searchInput.addEventListener("input", filterCharges);
+  searchInput.addEventListener("search", filterCharges);
+  searchInput.addEventListener("keyup", filterCharges);
+
+  clearButton.addEventListener("click", function () {
+    searchInput.value = "";
+    filterCharges();
+    searchInput.focus();
+  });
+
+  filterCharges();
+})();
+</script>
+</body>
+</html>
